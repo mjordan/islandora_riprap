@@ -35,6 +35,11 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Riprap microservice REST endpoint'),
       '#default_value' => $config->get('riprap_rest_endpoint') ? $config->get('riprap_rest_endpoint') : 'http://localhost:8000/api/fixity',
     );
+    $form['number_of_events'] = array(
+      '#type' => 'textfield',
+      '#title' => $this->t('Number of events to show in report. Leave empty to show all.'),
+      '#default_value' => $config->get('number_of_events') ? $config->get('number_of_events') : '10',
+    );
 
     return parent::buildForm($form, $form_state);
   }
@@ -45,6 +50,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
        $this->configFactory->getEditable('islandora_riprap.settings')
       ->set('riprap_rest_endpoint', $form_state->getValue('riprap_rest_endpoint'))
+      ->set('number_of_events', $form_state->getValue('number_of_events'))
       ->save();
 
     parent::submitForm($form, $form_state);
