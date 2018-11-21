@@ -5,7 +5,6 @@ namespace Drupal\islandora_riprap\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Component\Utility\SafeMarkup;
 
 /**
 * Controller.
@@ -63,7 +62,7 @@ class IslandoraRiprapController extends ControllerBase {
          $failed_events++;
        }
      }
-     $output = "Report from sample Riprap data: $successful_events successful events, $failed_events failed events.";
+     $output = "Report from sample Riprap data (3 events): $successful_events successful events, $failed_events failed events.";
      return $output;
    }
 

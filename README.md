@@ -2,11 +2,11 @@
 
 ## Introduction
 
-Beginnings of a Drupal 8 module to provide reports using data from the [Riprap](https://github.com/mjordan/riprap) fixity microservice.
+Beginnings of a Drupal 8 module to provide node-level reports using data from the [Riprap](https://github.com/mjordan/riprap) fixity microservice.
 
 ## Overview
 
-Currently doesn't do anything useful other than add a "Riprap" menu item to each node of `islandora_object` content type:
+Currently doesn't do anything useful other than add a "Fixity auditing" menu item to each node of `islandora_object` content type:
 
 ![node menu item](docs/islandora_riprap_node_view.png)
 
@@ -19,7 +19,7 @@ The report will eventually look better and more informative than this.
 ## Requirements
 
 * [Islandora](https://github.com/Islandora-CLAW/islandora) a.k.a. CLAW
-* A Riprap fixity microservice.
+* A [Riprap](https://github.com/mjordan/riprap) fixity microservice.
 
 ## Installation
 
@@ -30,9 +30,9 @@ The report will eventually look better and more informative than this.
 
 1. Go to Drupal's "Configuration" menu.
 1. In the "Islandora" section, click on the "Fixity auditing" link.
-1. Add your options.
+1. Adjust your config options.
 
-## Current maintainer:
+## Current maintainer
 
 * [Mark Jordan](https://github.com/mjordan)
 
