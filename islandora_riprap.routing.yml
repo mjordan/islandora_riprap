@@ -1,0 +1,17 @@
+islandora_riprap.riprap:
+  path: '/node/{node}/riprap'
+  defaults:
+    _controller: '\Drupal\islandora_riprap\Controller\IslandoraRiprapController::main'
+    _title: 'Islandora Riprap'
+  requirements:
+    _permission: 'administer site configuration'
+    node: \d+
+    _custom_access: '\Drupal\islandora_riprap\Controller\IslandoraRiprapController::islandoraContentTypeOnly'
+
+islandora_riprap.settings:
+  path: '/admin/config/islandora_riprap/settings'
+  defaults:
+    _form: '\Drupal\islandora_riprap\Form\IslandoraRiprapSettingsForm'
+    _title: 'Islandora Riprap'
+  requirements:
+    _permission: 'administer site configuration'

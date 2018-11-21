@@ -1,0 +1,5 @@
+islandora_riprap.page:
+  route_name: islandora_riprap.riprap
+  base_route: entity.node.canonical
+  title: 'Riprap'
+  weight: 100
