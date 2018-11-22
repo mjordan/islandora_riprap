@@ -6,15 +6,11 @@ Beginnings of a Drupal 8 module to provide node-level reports using data from th
 
 ## Overview
 
-Currently under development. So far, adds a "Fixity auditing" menu item to each node of `islandora_object` content type:
-
-![node menu item](docs/islandora_riprap_node_view.png)
-
-and displays an list of raw Media URLs for the node:
+Currently under development. So far, adds a "Fixity auditing" menu item to each node of `islandora_object` content type and displays an list of raw Media URLs for the node:
 
 ![details](docs/islandora_riprap_details.png)
 
-The report will eventually display a report indicating how many successful and failed events for each Media file.
+The goal is to replace the raw URLs with a report indicating how many successful and failed Riprap fixity events for each Media file.
 
 ## Requirements
 
