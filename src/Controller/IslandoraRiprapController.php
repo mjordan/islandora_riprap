@@ -13,6 +13,7 @@ class IslandoraRiprapController extends ControllerBase {
   public function __construct() {
     $config = \Drupal::config('islandora_riprap.settings');
     $this->riprap_endpoint = $config->get('riprap_rest_endpoint') ?: 'http://localhost:8000/api/fixity';
+    $this->use_drupal_urls = $config->get('use_drupal_urls') ?: FALSE;
   }
 
   /**

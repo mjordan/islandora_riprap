@@ -40,6 +40,11 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Number of events to show in report. Leave empty to show all.'),
       '#default_value' => $config->get('number_of_events') ? $config->get('number_of_events') : '10',
     );
+    $form['use_drupal_urls'] = array(
+      '#type' => 'checkbox',
+      '#title' => $this->t('Use Drupal URLs for media instead of Fedora URLs.'),
+      '#default_value' => $config->get('use_drupal_urls') ? $config->get('use_drupal_urls') : FALSE,
+    );
 
     return parent::buildForm($form, $form_state);
   }
@@ -51,6 +56,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
        $this->configFactory->getEditable('islandora_riprap.settings')
       ->set('riprap_rest_endpoint', $form_state->getValue('riprap_rest_endpoint'))
       ->set('number_of_events', $form_state->getValue('number_of_events'))
+      ->set('use_drupal_urls', $form_state->getValue('use_drupal_urls'))
       ->save();
 
     parent::submitForm($form, $form_state);
