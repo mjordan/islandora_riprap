@@ -13,6 +13,7 @@ class IslandoraRiprapController extends ControllerBase {
   public function __construct() {
     $config = \Drupal::config('islandora_riprap.settings');
     $this->riprap_endpoint = $config->get('riprap_rest_endpoint') ?: 'http://localhost:8000/api/fixity';
+    $this->number_of_events = $config->get('number_of_events') ?: 10;
     $this->use_drupal_urls = $config->get('use_drupal_urls') ?: FALSE;
   }
 
@@ -43,9 +44,7 @@ class IslandoraRiprapController extends ControllerBase {
       $auth = 'Bearer ' . $jwt->generateToken();
       $client = \Drupal::httpClient();
       $options = [
-        'auth' => [],
         'headers' => ['Authorization' => $auth],
-        'form_params' => []
       ];
       $response = $client->request('GET', 'http://localhost:8000/node/' . $nid . '/media?_format=json', $options);
       $code = $response->getStatusCode();
@@ -67,6 +66,8 @@ class IslandoraRiprapController extends ControllerBase {
       return "This node has no media associated with it.";
     }
 
+    $foo = $this->queryRiprap('http://localhost:8000/mockrepository/rest/11'); // testing
+    dd($foo);
     $output = $media_urls;
 
     /*
@@ -113,7 +114,7 @@ class IslandoraRiprapController extends ControllerBase {
    * @return array
    *   An associative array with taxonomy term names as keys and media URLs as values.
    */
-  public function getMediaUrls($results) {
+  private function getMediaUrls($results) {
     $array = json_decode($results, true);
     // @todo: These fields should probably be settable as admin options.
     $media_fields = array(
@@ -135,6 +136,7 @@ class IslandoraRiprapController extends ControllerBase {
       }
     }
 
+    // Replace the Media Use term URLs with names.
     foreach ($media_use_groups as $tid_url => $value) {
       $parts = explode('/', $tid_url);
       $tid = end($parts);
@@ -155,9 +157,43 @@ class IslandoraRiprapController extends ControllerBase {
    * @return string
    *   The term name.
    */
-  public function tidToName($tid) {
+  private function tidToName($tid) {
     $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($tid);
     return $term->getName();
+  }
+
+  /**
+   * Query Riprap for fixity events on the given resource.
+   *
+   * @param int $url
+   *   The Media resource's URL.
+   *
+   * @return string
+   *   The JSON response from Riprap.
+   */
+  private function queryRiprap($url) {
+    try {
+      $client = \Drupal::httpClient();
+      // Assumes Riprap requires no authentication (e.g., it's behind the Symfony or other firewall).
+      $options = [
+        'headers' => ['Resource-ID' => $url],
+        'query' => ['limit' => $this->number_of_events, 'sort' => 'desc'],
+      ];
+      $response = $client->request('GET', $this->riprap_endpoint, $options);
+      $code = $response->getStatusCode();
+      if ($code == 200) {
+        $body = $response->getBody()->getContents();
+      }
+      else {
+        \Drupal::logger('islandora_riprap')->error('HTTP response code returned by Riprap: @code', array('@code' => $code));
+      }
+    }
+    catch (RequestException $e) {
+       \Drupal::logger('islandora_riprap')->error($e->getMessage());
+       return "Sorry, there has been an error connecting to Riprap, please refer to the system log";
+    }
+
+    return $body;
   }
 
 }
