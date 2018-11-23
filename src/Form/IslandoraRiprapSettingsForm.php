@@ -33,12 +33,19 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
     $form['riprap_rest_endpoint'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Riprap microservice REST endpoint'),
+      '#description' => $this->t('Do not include the trailing /.'),
       '#default_value' => $config->get('riprap_rest_endpoint') ? $config->get('riprap_rest_endpoint') : 'http://localhost:8000/api/fixity',
     );
     $form['number_of_events'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Number of events to show in report. Leave empty to show all.'),
       '#default_value' => $config->get('number_of_events') ? $config->get('number_of_events') : '10',
+    );
+    $form['gemini_rest_endpoint'] = array(
+      '#type' => 'textfield',
+      '#title' => $this->t('Gemini microservice REST endpoint'),
+      '#description' => $this->t('Do not include the trailing /.'),
+      '#default_value' => $config->get('gemini_rest_endpoint') ? $config->get('gemini_rest_endpoint') : 'http://localhost:8000/gemini',
     );
     $form['use_drupal_urls'] = array(
       '#type' => 'checkbox',
@@ -56,6 +63,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
        $this->configFactory->getEditable('islandora_riprap.settings')
       ->set('riprap_rest_endpoint', $form_state->getValue('riprap_rest_endpoint'))
       ->set('number_of_events', $form_state->getValue('number_of_events'))
+      ->set('gemini_rest_endpoint', $form_state->getValue('gemini_rest_endpoint'))
       ->set('use_drupal_urls', $form_state->getValue('use_drupal_urls'))
       ->save();
 

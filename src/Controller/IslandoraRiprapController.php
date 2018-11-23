@@ -15,6 +15,7 @@ class IslandoraRiprapController extends ControllerBase {
     $this->riprap_endpoint = $config->get('riprap_rest_endpoint') ?: 'http://localhost:8000/api/fixity';
     $this->number_of_events = $config->get('number_of_events') ?: 10;
     $this->use_drupal_urls = $config->get('use_drupal_urls') ?: FALSE;
+    $this->gemini_endpoint = $config->get('gemini_rest_endpoint') ?: 'http://localhost:8000/gemini';
   }
 
   /**
@@ -66,8 +67,7 @@ class IslandoraRiprapController extends ControllerBase {
       return "This node has no media associated with it.";
     }
 
-    $foo = $this->queryRiprap('http://localhost:8000/mockrepository/rest/11'); // testing
-    dd($foo);
+    // $foo = $this->queryRiprap('http://localhost:8000/mockrepository/rest/11'); // testing
     $output = $media_urls;
 
     /*
@@ -125,13 +125,18 @@ class IslandoraRiprapController extends ControllerBase {
     );
 
     $media_use_groups = array();
+    $media_uuids = array();
     foreach ($array as $media) {
       foreach ($media_fields as $media_field) {
         if (array_key_exists($media_field, $media)) {
           if (!in_array($media['field_media_use'][0]['url'], $media_use_groups)) {
             $tag_url = $media['field_media_use'][0]['url'];
           }
-          $media_use_groups[$tag_url][] = $media[$media_field][0]['url'];
+          $media_url = $media[$media_field][0]['url'];
+          $media_use_groups[$tag_url][] = $media_url;
+
+          $media_uuid = $media[$media_field][0]['target_uuid'];
+          $media_uuids[$media_url] = $media_uuid;
         }
       }
     }
@@ -143,6 +148,15 @@ class IslandoraRiprapController extends ControllerBase {
       $name = $this->tidToName($tid);
       $media_use_groups[$name] = $media_use_groups[$tid_url];
       unset($media_use_groups[$tid_url]);
+    }
+
+    // Replace Drupal URLs with Fedora URLs.
+    if (!$this->use_drupal_urls) {
+      foreach ($media_use_groups as &$group) {
+        foreach ($group as &$url) {
+          $url = $this->getFedoraUrl($media_uuids[$url]);
+        }
+      }
     }
 
     return $media_use_groups;
@@ -196,4 +210,40 @@ class IslandoraRiprapController extends ControllerBase {
     return $body;
   }
 
+   /**
+    * Get a Drupal URL's Fedora equivalent from Gemini.
+    */
+  private function getFedoraUrl($uuid) {
+    try {
+      $container = \Drupal::getContainer();
+      $jwt = $container->get('jwt.authentication.jwt');
+      $auth = 'Bearer ' . $jwt->generateToken();
+      $client = \Drupal::httpClient();
+      $options = [
+        'http_errors' => false,
+        'headers' => ['Authorization' => $auth],
+      ];
+      $url = $this->gemini_endpoint . '/' . $uuid;
+      $response = $client->request('GET', $url, $options);
+      $code = $response->getStatusCode();
+      if ($code == 200) {
+        $body = $response->getBody()->getContents();
+        $body_array = json_decode($body, true);
+        return $body_array['fedora'];
+      }
+      elseif ($code == 404) {
+        $body = $response->getBody()->getContents();
+        return 'Not in Fedora';
+      }
+      else {
+        \Drupal::logger('islandora_riprap')->error('HTTP response code: @code', array('@code' => $code));
+      }
+    }
+    catch (RequestException $e) {
+       \Drupal::logger('islandora_riprap')->error($e->getMessage());
+       return "Sorry, there has been an error, please refer to the system log";
+    }
+  }
+
 }
+
