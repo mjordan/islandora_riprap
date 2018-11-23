@@ -6,7 +6,7 @@ Beginnings of a Drupal 8 module to provide node-level reports using data from th
 
 ## Overview
 
-Currently under development. So far, adds a "Fixity auditing" menu item to each node of `islandora_object` content type and displays an list of raw Media URLs for the node:
+Currently under development. So far, adds a "Fixity auditing" menu item to each node of `islandora_object` content type and displays an list of Fedora URLs for Media associated with the node:
 
 ![details](docs/islandora_riprap_details.png)
 
