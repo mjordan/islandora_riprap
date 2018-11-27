@@ -21,8 +21,8 @@ Currently under development. So far, adds a "Fixity auditing" field to the "Medi
 ## Configuration
 
 1. Go to Drupal's "Configuration" menu.
-1. In the "Islandora" section, click on the "Fixity auditing" link.
-1. Adjust your config options.
+   1. In the "Islandora" section, click on the "Fixity auditing" link.
+   1. Adjust your config options.
 1. Add the "Fixity Auditing" field to the "Manage Media" View:
    1. In your list of Views ("Admin > Structure > Views"), click on the "Edit" button for the "Manage Media" View.
    1. In the "Page" display, click on the "Add" Fields button.
@@ -33,11 +33,11 @@ Currently under development. So far, adds a "Fixity auditing" field to the "Medi
    1. Optionally, you can locate the new "Fixity Auditing" field to any position you want in the Media table.
    1. Click on the "Save" button to save the change to the View.
 
-Now, when you click on the "Media" tab in an Islandora object node, you will see a new column in the table showing (for now) the Fedora URL for the media file:
+Now, when you click on the "Media" tab in an Islandora object node, you will see a new column in the table showing the Fedora URL for the media file:
 
 ![details](docs/islandora_riprap_details.png)
 
-The cell in green to indicate that all fixity events for the media file were successful. The "Details" link leads to a full report of the events.
+The cell is green to indicate that all fixity events for the media file were successful. The "Details" link leads to a full report of the events.
 
 ## Current maintainer
 
