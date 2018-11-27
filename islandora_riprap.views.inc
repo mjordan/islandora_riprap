@@ -1,16 +1,15 @@
 <?php
 
 /**
-* Implements hook_views_data_alter().
-*/
-function islandora_riprap_views_data_alter(&$data) {
-  $data['media']['riprap_results'] = [
-    'title' => t('Riprap Results'),
-    'group' => t('Media'),
-    'help' => t('Shows results from the Riprap fixity microservice.'),
-    'field' => [
+  * Implements hook_views_data_alter().
+  */
+function islandora_riprap_views_data_alter(array &$data) {
+  $data['media']['riprap_results'] = array(
+    'title' => t('Fixity auditing'),
+    'help' => t('Shows results from the Riprap fixity auditing microservice.'),
+    'field' => array(
       'id' => 'riprap_results',
-    ],
-  ];
+    ),
+  );
 }
 
