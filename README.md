@@ -6,7 +6,7 @@ A Drupal 8 module to provide node-level reports using data from the [Riprap](htt
 
 ## Overview
 
-Currently under development. So far, adds a "Fixity auditing" field to the "Media" tab (which is actually the output of the "Manage Media" view provided by the Islandora module) showing Fedora URLs for Media associated with the node. The goal is to replace the raw URLs with a report indicating how many successful and failed Riprap fixity events for each Media file.
+Currently under development. So far, adds a "Fixity auditing" field to the "Media" tab (which is actually the output of the "Manage Media" view provided by the Islandora module) showing Fedora URLs for Media associated with the node. Each URL is color coded to indicate whether or not any fixit events have failed, with a link to a full report of the events.
 
 ## Requirements
 
@@ -37,7 +37,7 @@ Now, when you click on the "Media" tab in an Islandora object node, you will see
 
 ![details](docs/islandora_riprap_details.png)
 
-(Note that the cell in green is for demonstration purposes only, to illustrate the use of color to indicate that all fixity events for a file were successful.)
+The cell in green to indicate that all fixity events for the media file were successful. The "Details" link leads to a full report of the events.
 
 ## Current maintainer
 

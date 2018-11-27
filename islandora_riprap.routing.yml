@@ -2,7 +2,7 @@ islandora_riprap.riprap:
   path: '/media/{media}/riprap'
   defaults:
     _controller: '\Drupal\islandora_riprap\Controller\IslandoraRiprapController::main'
-    _title: 'Islandora Riprap'
+    _title: 'Fixity Events'
   requirements:
     _permission: 'administer site configuration'
     media: \d+

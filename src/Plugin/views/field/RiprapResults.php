@@ -42,7 +42,23 @@ class RiprapResults extends FieldPluginBase {
       $url = $this->getFedoraUrl($binary_resource_uuid);
     }
 
-    return $url;
+    // @todo: clean up logic around assigning sucess and fail outcomes.
+    // The outcome is passed to the theme and determines if the table
+    // cell in the Manage Media View output is green or orange.
+    if ($url == 'Not in Fedora') {
+      $outcome = 'notinfedora';
+      $mid = null;
+    }
+    else {
+      $outcome = 'success';
+    }
+
+    return [
+      '#theme' => 'islandora_riprap_summary',
+      '#content' => $url,
+      '#outcome' => $outcome,
+      '#mid' => $mid,
+    ];
   }
 
   /**
