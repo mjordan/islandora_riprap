@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Beginnings of a Drupal 8 module to provide node-level reports using data from the [Riprap](https://github.com/mjordan/riprap) fixity microservice.
+A Drupal 8 module to provide node-level reports using data from the [Riprap](https://github.com/mjordan/riprap) fixity microservice. Still under development.
 
 ## Overview
 
@@ -18,13 +18,14 @@ Currently under development. So far, adds a "Fixity auditing" field to the "Medi
 1. Clone this repo into your Islandora's `drupal/web/modules/contrib` directory.
 1. Enable the module either under the "Admin > Extend" menu or by running `drush en -y islandora_riprap`.
 1. Add the "Fixity Auditing" field to the "Manage Media" View:
-  1. In your list of Views, click on the "Edit" button for the "Manage Media" View.
-  1. In the "Page" display, click on the "Add" Fields button.
-  1. From the list of fields, check "Fixity Auditing."
-  1. Click on "Apply (this display)".
-  1. Change the label if you want.
-  1. Click on "Apply (this display)".
-  1. Click on the "Save" button to save the change to the View.
+   1. In your list of Views, click on the "Edit" button for the "Manage Media" View.
+   1. In the "Page" display, click on the "Add" Fields button.
+   1. From the list of fields, check "Fixity Auditing."
+   1. Click on "Apply (this display)".
+   1. Change the label if you want.
+   1. Click on "Apply (this display)".
+   1. Optionally, you can locate the new "Fixity Auditing" field to any position you want in the Media table.
+   1. Click on the "Save" button to save the change to the View.
 
 Now, when you click on the "Media" tab in an Islandora object node, you will see a new column in the table showing (for now) the Fedora URL for the media file:
 
