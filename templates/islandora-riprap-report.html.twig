@@ -1,11 +1,5 @@
 <div {{ attributes }}>
     <div class="islandora_riprap_report">
-    {% for media_name, urls in report %}
-      <h4>{{ media_name }}</h4>
-        <ul>
-        {% for media_url in urls %}
-          <li>{{ media_url }}</li>
-        {% endfor %}
-        </ul>
-    {% endfor %}
+    <h4>Sample Riprap output - does not correspond to current media</h4>
+    <pre>{{ report }}</pre>
 </div>

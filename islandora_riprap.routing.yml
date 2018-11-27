@@ -1,12 +1,11 @@
 islandora_riprap.riprap:
-  path: '/node/{node}/riprap'
+  path: '/media/{media}/riprap'
   defaults:
     _controller: '\Drupal\islandora_riprap\Controller\IslandoraRiprapController::main'
     _title: 'Islandora Riprap'
   requirements:
     _permission: 'administer site configuration'
-    node: \d+
-    _custom_access: '\Drupal\islandora_riprap\Controller\IslandoraRiprapController::islandoraContentTypeOnly'
+    media: \d+
 
 islandora_riprap.settings:
   path: '/admin/config/islandora_riprap/settings'
