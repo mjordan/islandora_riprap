@@ -19,3 +19,15 @@ function template_preprocess_islandora_riprap_report(&$variables) {
     'id' => ['islandora_riprap_report'],
   ];
 }
+
+/**
+* Implements hook_page_attachments().
+*/
+function islandora_riprap_page_attachments(array &$attachments) {
+  $current_path = \Drupal::service('path.current')->getPath();
+  $path_args = explode('/', $current_path);
+  // E.g., the Manage Media View for each Islandora object.
+  if ($path_args[1] == 'node' && $path_args[3] == 'media') {
+    $attachments['#attached']['library'][] = 'islandora_riprap/islandora_riprap';
+  }
+}

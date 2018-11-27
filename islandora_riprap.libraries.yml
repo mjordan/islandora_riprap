@@ -1,0 +1,7 @@
+islandora_riprap:
+  version: 1.x
+  js:
+    js/islandora_riprap.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once

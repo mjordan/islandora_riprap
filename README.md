@@ -37,6 +37,8 @@ Now, when you click on the "Media" tab in an Islandora object node, you will see
 
 ![details](docs/islandora_riprap_details.png)
 
+(Note that the cell in green is for demonstration purposes only, to illustrate the use of color to indicate that all fixity events for a file were successful.)
+
 ## Current maintainer
 
 * [Mark Jordan](https://github.com/mjordan)
