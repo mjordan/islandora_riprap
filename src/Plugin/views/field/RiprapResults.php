@@ -4,7 +4,6 @@ namespace Drupal\islandora_riprap\Plugin\views\field;
 
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
-use Drupal\Core\Url;
 use Drupal\islandora_riprap\Riprap\IslandoraRiprapUtils;
 
 /**

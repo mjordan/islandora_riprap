@@ -23,7 +23,7 @@ Currently under development. So far, adds a "Fixity auditing" field to the "Medi
 1. Go to Drupal's "Configuration" menu.
    1. In the "Islandora" section, click on the "Fixity auditing" link.
    1. Adjust your config options.
-1. Add the "Fixity Auditing" field to the "Manage Media" View:
+1. Add the "Fixity Auditing" field to the "Manage Media" View (like you would add any other field to a view):
    1. In your list of Views ("Admin > Structure > Views"), click on the "Edit" button for the "Manage Media" View.
    1. In the "Page" display, click on the "Add" Fields button.
    1. From the list of fields, check "Fixity Auditing".

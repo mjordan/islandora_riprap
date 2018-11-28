@@ -54,6 +54,9 @@ class IslandoraRiprapController extends ControllerBase {
   /**
    * Query Riprap for fixity events on the given resource.
    *
+   * Temporary override of the Riprap::queryRiprap() method so
+   * we can develop without a live Riprap service.
+   *
    * @param int $mid
    *   The Media resource's ID.
    *

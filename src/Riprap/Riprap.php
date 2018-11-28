@@ -13,8 +13,8 @@ class Riprap {
    * @param string $resource_id
    *   The URI of the resource.
    *
-   * @return string
-   *   The raw JSON response body.
+   * @return string|bool
+   *   The raw JSON response body, or false.
    */
   public function getEvents($resource_id) {
     try {
@@ -28,6 +28,7 @@ class Riprap {
       $code = $response->getStatusCode();
       if ($code == 200) {
         $body = $response->getBody()->getContents();
+        return $body;
       }
       else {
         \Drupal::logger('islandora_riprap')->error('HTTP response code returned by Riprap: @code', array('@code' => $code));
@@ -35,10 +36,8 @@ class Riprap {
     }
     catch (RequestException $e) {
        \Drupal::logger('islandora_riprap')->error($e->getMessage());
-       return "Sorry, there has been an error connecting to Riprap, please refer to the system log";
+       drupal_set_message(t("Sorry, there has been an error connecting to Riprap, please refer to the system log"), 'error');
     }
-
-    return $body;
   }
 
 }
