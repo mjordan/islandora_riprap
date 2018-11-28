@@ -4,6 +4,8 @@ namespace Drupal\islandora_riprap\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\Response;
+use Drupal\islandora_riprap\Riprap\Riprap;
+use Drupal\islandora_riprap\IslandoraRiprapUtils;
 
 /**
 * Controller.

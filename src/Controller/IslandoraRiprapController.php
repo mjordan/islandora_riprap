@@ -3,6 +3,7 @@
 namespace Drupal\islandora_riprap\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\islandora_riprap\Riprap\Riprap;
 
 /**
 * Controller.
@@ -22,9 +23,11 @@ class IslandoraRiprapController extends ControllerBase {
    * @return string
    */
    public function main() {
+     $riprap = new Riprap();
      $current_path = \Drupal::service('path.current')->getPath();
      $path_args = explode('/', $current_path);
      $mid = $path_args[2];
+     // $output = $riprap->queryRiprap($mid); // In production.
      $output = $this->queryRiprap($mid);
 
      $header = [t('Event UUID'), t('Resource URI'), t('Event type'), t('Timestamp'),
