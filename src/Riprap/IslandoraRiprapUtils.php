@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\islandora_riprap;
+namespace Drupal\islandora_riprap\Riprap;
 
 /**
  * Utilities for interacting with a Riprap fixity microservice.
