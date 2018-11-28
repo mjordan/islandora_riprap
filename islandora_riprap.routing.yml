@@ -7,6 +7,16 @@ islandora_riprap.riprap:
     _permission: 'administer site configuration'
     media: \d+
 
+islandora_riprap.premis:
+  path: '/media/{media}/premis'
+  defaults:
+    _controller: '\Drupal\islandora_riprap\Controller\IslandoraRiprapPremisController::main'
+    # _title: 'Fixity Events'
+  requirements:
+    # _permission: 'administer site configuration'
+    _permission: 'access content'
+    media: \d+
+
 islandora_riprap.settings:
   path: '/admin/config/islandora_riprap/settings'
   defaults:

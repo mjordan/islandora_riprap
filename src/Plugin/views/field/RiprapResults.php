@@ -142,7 +142,7 @@ class RiprapResults extends FieldPluginBase {
    *   A Media ID.
    *
    * @return string
-   *   The local URL of the file associated with the incoming Media entity.
+   *   The local Drupal URL of the file associated with the incoming Media entity.
    */
   public function getLocalUrl($mid) {
     $media_fields = array(
@@ -198,21 +198,3 @@ class RiprapResults extends FieldPluginBase {
   }
 
 }
-
-/*
-    $sample_riprap_output = '[{"event_uuid":"cdecb9ac-5938-4992-b5b7-8ef9e4e94c62","resource_id":"http:\/\/localhost:8000\/mockrepository\/rest\/11","event_type":"fix","timestamp":"2018-10-20T07:35:04-0800","digest_algorithm":"SHA-1","digest_value":"339e2ebc99d2a81e7786a466b5cbb9f8b3b81377","event_detail":"","event_outcome":"suc","event_outcome_detail_note":"Fedora says hi."},{"event_uuid":"f26ed6cc-e6e2-4ebe-9607-5ad7a2e4b857","resource_id":"http:\/\/localhost:8000\/mockrepository\/rest\/11","event_type":"fix","timestamp":"2018-10-29T07:35:04-0800","digest_algorithm":"SHA-1","digest_value":"339e2ebc99d2a81e7786a466b5cbb9f8b3b81377","event_detail":"","event_outcome":"suc","event_outcome_detail_note":"Fedora says hi."},{"event_uuid":"af60c8d5-7504-4be0-a355-06177855b8b8","resource_id":"http:\/\/localhost:8000\/mockrepository\/rest\/11","event_type":"ing","timestamp":"2018-11-20T07:35:04-0800","digest_algorithm":"SHA-1","digest_value":"339e2ebc99d2a81e7786a466b5cbb9f8b3b81377","event_detail":"","event_outcome":"fail","event_outcome_detail_note":""}]';
-    $riprap_output_as_array = json_decode($sample_riprap_output, true);
-    $successful_events = 0;
-    $failed_events = 0;
-    foreach ($riprap_output_as_array as $event) {
-      if ($event['event_outcome'] == 'suc') {
-        $successful_events++;
-      }
-      if ($event['event_outcome'] == 'fail') {
-        $failed_events++;
-      }
-    }
-
-    $output = "Report from sample Riprap data (3 events): $successful_events successful events, $failed_events failed events.";
-*/
-
