@@ -9,7 +9,7 @@ function islandora_riprap_theme($existing, $type, $theme, $path) {
       'variables' => ['content' => null, 'outcome' => null, 'mid' => null],
     ],
     'islandora_riprap_report' => [
-      'variables' => ['report' => null, 'mid' => null],
+      'variables' => ['report' => null, 'mid' => null, 'binary_resource_url' => null],
     ],
   ];
 }

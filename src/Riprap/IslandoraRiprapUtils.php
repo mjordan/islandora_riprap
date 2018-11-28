@@ -2,6 +2,8 @@
 
 namespace Drupal\islandora_riprap\Riprap;
 
+use Drupal\media\Entity\Media;
+
 /**
  * Utilities for interacting with a Riprap fixity microservice.
  */
@@ -9,9 +11,6 @@ class IslandoraRiprapUtils {
 
   public function __construct() {
     $config = \Drupal::config('islandora_riprap.settings');
-    $this->riprap_endpoint = $config->get('riprap_rest_endpoint') ?: 'http://localhost:8000/api/fixity';
-    $this->number_of_events = $config->get('number_of_events') ?: 10;
-    $this->use_drupal_urls = $config->get('use_drupal_urls') ?: FALSE;
     $this->gemini_endpoint = $config->get('gemini_rest_endpoint') ?: 'http://localhost:8000/gemini';
   }
 
@@ -31,7 +30,8 @@ class IslandoraRiprapUtils {
       'field_media_audio_file',
       'field_media_video_file',
     );
-    $media = \Drupal\Media\Entity\Media::load($mid);
+   
+    $media = Media::load($mid); 
     // Loop through each of the media fields and get the UUID of the File
     // in the first one encountered. Assumes each Media entity has only
     // one of the media file fields.
