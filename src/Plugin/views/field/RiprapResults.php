@@ -4,6 +4,7 @@ namespace Drupal\islandora_riprap\Plugin\views\field;
 
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
+use Drupal\islandora_riprap\Riprap\Riprap;
 use Drupal\islandora_riprap\Riprap\IslandoraRiprapUtils;
 
 /**
@@ -29,32 +30,47 @@ class RiprapResults extends FieldPluginBase {
     $this->use_drupal_urls = $config->get('use_drupal_urls') ?: FALSE;
 
     $utils = new IslandoraRiprapUtils();
+    $riprap = new Riprap();
 
     $media = $value->_entity;
     $mid = $media->id();
     $binary_resource_uuid = $utils->getFileUuid($mid);
     
     if ($this->use_drupal_urls) {
-      $url = $utils->getLocalUrl($mid);
+      $binary_resource_url = $utils->getLocalUrl($mid);
     }
     else {
-      $url = $utils->getFedoraUrl($binary_resource_uuid);
+      $binary_resource_url = $utils->getFedoraUrl($binary_resource_uuid);
     }
 
-    // @todo: clean up logic around assigning sucess and fail outcomes.
-    // The outcome is passed to the theme and determines if the table
-    // cell in the Manage Media View output is green or orange.
-    if ($url == 'Not in Fedora') {
+    $riprap_output = $riprap->getEvents($binary_resource_url);
+    $events = (json_decode($riprap_output, true));
+
+    // Look for events with an 'event_outcome' of 'fail'.
+    $failed_events = 0;
+    foreach ($events as $event) {
+      if ($event['event_outcome'] == 'fail') {
+        $failed_events++;
+      }
+    }
+
+    // Set flag in markup so that our Javascript can set the color.
+    if ($binary_resource_url == 'Not in Fedora') {
       $outcome = 'notinfedora';
       $mid = null;
     }
     else {
-      $outcome = 'success';
+      if ($failed_events == 0) {
+        $outcome = 'success';
+      }
+      else {
+        $outcome = 'fail';
+      }
     }
 
     return [
       '#theme' => 'islandora_riprap_summary',
-      '#content' => $url,
+      '#content' => $binary_resource_url,
       '#outcome' => $outcome,
       '#mid' => $mid,
     ];

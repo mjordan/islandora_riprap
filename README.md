@@ -20,6 +20,8 @@ Currently under development. So far, adds a "Fixity auditing" field to the "Medi
 
 ## Configuration
 
+> Note: If you are running Islandora in a CLAW Playbook Vagrant machine and Riprap on the Vagrant host machine, start the Riprap web server by running `php bin/console server:start *:8001` in the Riprap directory. Then in Drupal, make sure your "Riprap microservice REST endpoint" setting says "http://10.0.2.2:8001/api/fixity".
+
 1. Go to Drupal's "Configuration" menu.
    1. In the "Islandora" section, click on the "Fixity auditing" link.
    1. Adjust your config options.
