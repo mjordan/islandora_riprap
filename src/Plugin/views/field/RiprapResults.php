@@ -47,6 +47,10 @@ class RiprapResults extends FieldPluginBase {
     $events = (json_decode($riprap_output, true));
 
     // Look for events with an 'event_outcome' of 'fail'.
+    if (count($events) === 0) {
+      return NULL;
+    }
+
     $failed_events = 0;
     foreach ($events as $event) {
       if ($event['event_outcome'] == 'fail') {

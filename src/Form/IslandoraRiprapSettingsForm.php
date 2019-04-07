@@ -52,6 +52,11 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Use Drupal URLs for media instead of Fedora URLs.'),
       '#default_value' => $config->get('use_drupal_urls') ? $config->get('use_drupal_urls') : FALSE,
     );
+    $form['show_riprap_warnings'] = array(
+      '#type' => 'checkbox',
+      '#title' => $this->t('Show and log warnings about missing resources and fixity events.'),
+      '#default_value' => !$config->get('show_riprap_warnings') ? $config->get('show_riprap_warnings') : TRUE,
+    );
 
     return parent::buildForm($form, $form_state);
   }
@@ -65,6 +70,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       ->set('number_of_events', $form_state->getValue('number_of_events'))
       ->set('gemini_rest_endpoint', $form_state->getValue('gemini_rest_endpoint'))
       ->set('use_drupal_urls', $form_state->getValue('use_drupal_urls'))
+      ->set('show_riprap_warnings', $form_state->getValue('show_riprap_warnings'))
       ->save();
 
     parent::submitForm($form, $form_state);

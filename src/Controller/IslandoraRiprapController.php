@@ -15,6 +15,7 @@ class IslandoraRiprapController extends ControllerBase {
     $this->riprap_endpoint = $config->get('riprap_rest_endpoint') ?: 'http://localhost:8000/api/fixity';
     $this->number_of_events = $config->get('number_of_events') ?: 10;
     $this->use_drupal_urls = $config->get('use_drupal_urls') ?: FALSE;
+    $this->show_warnings = !$config->get('show_riprap_warnings') ?: TRUE;
     $this->gemini_endpoint = $config->get('gemini_rest_endpoint') ?: 'http://localhost:8000/gemini';
   }
 
@@ -46,14 +47,17 @@ class IslandoraRiprapController extends ControllerBase {
      }
 
      $riprap_output = json_decode($riprap_output, true);
-     if (count($riprap_output) == 0) {
-       drupal_set_message(
-         t('Riprap appears to not have any fixity events for @binary_resource_url.',
-           array('@binary_resource_url' => $binary_resource_url)
-         ),
-         'warning'
-       );
-       return array();
+     if ($this->show_warnings) {
+       if (count($riprap_output) == 0 && $binary_resource_url != 'Not in Fedora') {
+         drupal_set_message(
+           t('Riprap appears to not have any fixity events for @binary_resource_url.',
+             array('@binary_resource_url' => $binary_resource_url)
+           ),
+           'warning',
+           TRUE
+         );
+         return array();
+       }
      }
 
      $header = [t('Event UUID'), t('Resource URI'), t('Event type'), t('Timestamp'),
