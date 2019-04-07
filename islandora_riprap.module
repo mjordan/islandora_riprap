@@ -37,9 +37,9 @@ function template_preprocess_islandora_riprap_summary(&$variables) {
 */
 function islandora_riprap_page_attachments(array &$attachments) {
   $current_path = \Drupal::service('path.current')->getPath();
-  $path_args = explode('/', $current_path);
+  $path_args = explode('/', ltrim($current_path, '/'));
   // E.g., the Manage Media View for each Islandora object.
-  if (count($path_args) > 2 && $path_args[1] == 'node' && $path_args[3] == 'media') {
+  if (count($path_args) >= 3 && $path_args[0] == 'node' && $path_args[2] == 'media') {
     $attachments['#attached']['library'][] = 'islandora_riprap/islandora_riprap';
   }
 }

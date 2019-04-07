@@ -11,7 +11,7 @@ class Riprap {
     $config = \Drupal::config('islandora_riprap.settings');
     $this->riprap_endpoint = $config->get('riprap_rest_endpoint') ?: 'http://localhost:8000/api/fixity';
     $this->number_of_events = $config->get('number_of_events') ?: 10;
-    $this->show_warnings = !$config->get('show_riprap_warnings') ?: TRUE;
+    $this->show_warnings = !$config->get('show_riprap_warnings') ? $config->get('show_riprap_warnings') : TRUE;
   }
 
   /**
@@ -43,7 +43,7 @@ class Riprap {
       else {
         if ($this->show_warnings) {
           if ($resource_id !== 'Not in Fedora') {
-            \Drupal::logger('islandora_riprap')->error('HTTP response code returned by Riprap: @code', array('@code' => $code));
+            \Drupal::logger('islandora_riprap')->error('HTTP response code returned by Riprap for request to @resource_id: @code', array('@code' => $code, '@resource_id' => $resource_id));
             drupal_set_message(t("Riprap appears to not have any events for @resource_id", array('@resource_id' => $resource_id)), 'warning', TRUE);
           }
         }
