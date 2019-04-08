@@ -47,21 +47,19 @@ class RiprapResults extends FieldPluginBase {
     $events = (json_decode($riprap_output, true));
 
     // Look for events with an 'event_outcome' of 'fail'.
-    if (count($events) === 0) {
-      return NULL;
-    }
-
     $failed_events = 0;
-    foreach ($events as $event) {
-      if ($event['event_outcome'] == 'fail') {
-        $failed_events++;
+    if (count($events) > 0) {
+      foreach ($events as $event) {
+        if ($event['event_outcome'] == 'fail') {
+          $failed_events++;
+        }
       }
     }
 
     // Set flag in markup so that our Javascript can set the color.
     if ($binary_resource_url == 'Not in Fedora') {
       $outcome = 'notinfedora';
-      $mid = null;
+      $mid = NULL;
     }
     else {
       if ($failed_events == 0) {
@@ -70,6 +68,20 @@ class RiprapResults extends FieldPluginBase {
       else {
         $outcome = 'fail';
       }
+    }
+
+    if (count($events) == 0) {
+      $outcome = 'noevents';
+      // Show mid and indicate that file is not in Riprap (e.g., 'No Riprap events for $mid').
+      $binary_resource_url = 'No Riprap events for ' . $binary_resource_url;
+    }
+
+    // Not a Riprap event, but output that indicates Riprap is not available at its
+    // configured endpoint URL.
+    if (array_key_exists('riprap_status', $events) && $events['riprap_status'] == 404) {
+      $binary_resource_url = $events['message'];
+      $mid = NULL;
+      $outcome = 'riprapnotfound';
     }
 
     return [

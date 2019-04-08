@@ -40,6 +40,12 @@ class Riprap {
         $body = $response->getBody()->getContents();
         return $body;
       }
+      elseif ($code == 404) {
+        \Drupal::logger('islandora_riprap')->error('Riprap service not running or found at @endpoint', array('@endpoint' => $this->riprap_endpoint));
+        // This is a special 'response' indicating that Riprap was not found (or is not running) at its configured URL.
+        $status_message = t("Riprap not found or is not running at @endpoint", array('@endpoint' => $this->riprap_endpoint));
+        return json_encode(array('riprap_status' => 404, 'message' => $status_message));
+      }
       else {
         if ($this->show_warnings) {
           if ($resource_id !== 'Not in Fedora') {

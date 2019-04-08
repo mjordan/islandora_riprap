@@ -41,6 +41,10 @@ Now, when you click on the "Media" tab in an Islandora object node, you will see
 
 The cell is green to indicate that all fixity events for the media file were successful. The "Details" link leads to a full report of the events.
 
+If Riprap is not found or is not running at its configured endpoint URL, each cell will contain an error message to that effect:
+
+![riprap not found](docs/riprap_not_found.png)
+
 ## Current maintainer
 
 * [Mark Jordan](https://github.com/mjordan)
