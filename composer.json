@@ -1,0 +1,18 @@
+{
+  "name": "islandora-rdm/islandora_riprap",
+  "type": "drupal-module",
+  "description": "RipRap reports in Drupal.",
+  "keywords": [
+    "Drupal"
+  ],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/islandora_fits",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/islandora_fits",
+    "source": "http://cgit.drupalcode.org/islandora_fits"
+  },
+  "require": {
+    "islandora-rdm/islandora_rdm": "*" 
+  }
+}
