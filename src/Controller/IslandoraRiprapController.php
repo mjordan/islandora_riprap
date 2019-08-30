@@ -22,7 +22,7 @@ class IslandoraRiprapController extends ControllerBase {
   /**
    * Get the Riprap data for the current Media entity and render it.
    *
-   * @return string
+   * @return array
    */
    public function main() {
      $riprap = new Riprap();
@@ -39,7 +39,7 @@ class IslandoraRiprapController extends ControllerBase {
        $binary_resource_url = $utils->getFedoraUrl($binary_resource_uuid);
      } 
 
-     $riprap_output = $riprap->getEvents($binary_resource_url);
+     $riprap_output = $riprap->getFailures($binary_resource_url);
 
      if (!$riprap_output) {
        drupal_set_message(t('Cannot retrieve fixity events from Riprap. See the system log for more information.'), 'error');
