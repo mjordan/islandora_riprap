@@ -5,12 +5,17 @@ namespace Drupal\islandora_riprap\Form;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure example settings for this site.
  */
 class IslandoraRiprapSettingsForm extends ConfigFormBase {
+  /**
+   * The path to stored config file.
+   *
+   * @var string
+   */
+  protected $config_filepath;
 
   public function getFormId() {
     return 'islandora_riprap_admin_settings';
@@ -24,12 +29,16 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       'islandora_riprap.settings',
     ];
   }
+public function __construct(ConfigFactoryInterface $config_factory) {
+    $this->config_filepath = "private://riprap_config";
+  parent::__construct($config_factory);
+}
 
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config_file_path = "private://rdm_config";
+
     $actual_path = \Drupal::service('file_system')->realpath('private://');
     if(!$actual_path) {
       $this->messenger()->addWarning("No Private File Folder found, please contact system administrator");
@@ -42,7 +51,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       $term_data[$term->tid] = $term->name;
     }
 
-    $current_config = nl2br(file_get_contents("$config_file_path/islandora_riprap_config.yml"));
+    $current_config = nl2br(file_get_contents("{$this->config_filepath}/islandora_riprap_config.yml"));
     $replacement_string = "drupal_media_auth: ['xxxxx', 'xxxxx']";
     $current_config = preg_replace('/drupal_media_auth.*\]/', $replacement_string, $current_config);
 
@@ -138,9 +147,8 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
 
   public function persistConfig($values) {
     $base_url = \Drupal::request()->getSchemeAndHttpHost();
-    $config_file_path = "private://rdm_config";
-    if (!file_exists($config_file_path)) {
-      mkdir($config_file_path, 0777, true);
+    if (!file_exists($this->config_filepath)) {
+      mkdir($this->config_filepath, 0777, true);
     }
     $riprap_config = <<<EOF
 ####################
@@ -180,7 +188,7 @@ plugins.postcheck: ['PluginPostCheckCopyFailures']
 # Absolute or relative to the Riprap application directory.
 failures_log_path: '/tmp/riprap_failed_events.log'
 EOF;
-  $success = file_save_data($riprap_config, "$config_file_path/islandora_riprap_config.yml", FILE_EXISTS_REPLACE);
+  $success = file_save_data($riprap_config, "$this->config_filepath/islandora_riprap_config.yml", FILE_EXISTS_REPLACE);
   }
 
 }
