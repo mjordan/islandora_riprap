@@ -2,16 +2,16 @@
 
 namespace Drupal\islandora_riprap\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure example settings for this site.
  */
 class IslandoraRiprapSettingsForm extends ConfigFormBase {
-  /**
-   * {@inheritdoc}
-   */
+
   public function getFormId() {
     return 'islandora_riprap_admin_settings';
   }
@@ -29,7 +29,12 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config_file_path = "public://rdm_config";
+    $config_file_path = "private://rdm_config";
+    $actual_path = \Drupal::service('file_system')->realpath('private://');
+    if(!$actual_path) {
+      $this->messenger()->addWarning("No Private File Folder found, please contact system administrator");
+    }
+
     $config = $this->config('islandora_riprap.settings');
     $vid = 'islandora_media_use';
     $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
@@ -133,7 +138,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
 
   public function persistConfig($values) {
     $base_url = \Drupal::request()->getSchemeAndHttpHost();
-    $config_file_path = "public://rdm_config";
+    $config_file_path = "private://rdm_config";
     if (!file_exists($config_file_path)) {
       mkdir($config_file_path, 0777, true);
     }
