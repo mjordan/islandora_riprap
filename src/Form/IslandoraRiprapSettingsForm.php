@@ -52,6 +52,9 @@ public function __construct(ConfigFactoryInterface $config_factory) {
     }
 
     $current_config = nl2br(file_get_contents("{$this->config_filepath}/islandora_riprap_config.yml"));
+    if (!$current_config) {
+      $current_config = t("No saved configuration has been found.");
+    }
     $replacement_string = "drupal_media_auth: ['xxxxx', 'xxxxx']";
     $current_config = preg_replace('/drupal_media_auth.*\]/', $replacement_string, $current_config);
 
