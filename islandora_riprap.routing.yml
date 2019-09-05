@@ -4,7 +4,7 @@ islandora_riprap.riprap:
     _controller: '\Drupal\islandora_riprap\Controller\IslandoraRiprapController::main'
     _title: 'Fixity Events'
   requirements:
-    _permission: 'administer site configuration'
+    _permission: 'manage media'
     media: \d+
 
 islandora_riprap.premis:
@@ -24,3 +24,4 @@ islandora_riprap.settings:
     _title: 'Islandora Riprap'
   requirements:
     _permission: 'administer site configuration'
+

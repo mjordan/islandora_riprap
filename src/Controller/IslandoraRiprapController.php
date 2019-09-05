@@ -22,7 +22,7 @@ class IslandoraRiprapController extends ControllerBase {
   /**
    * Get the Riprap data for the current Media entity and render it.
    *
-   * @return string
+   * @return array
    */
    public function main() {
      $riprap = new Riprap();
