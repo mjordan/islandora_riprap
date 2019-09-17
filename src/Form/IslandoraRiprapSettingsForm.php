@@ -123,6 +123,11 @@ public function __construct(ConfigFactoryInterface $config_factory) {
       '#markup' => $current_config,
       '#title' => t('Current configuration'),
     ];
+    $form['report_email'] = [
+      '#type' => 'email',
+      '#title' => $this->t('EMail of Fixity Administrator'),
+      '#default_value' => $config->get('report_email') ? $config->get('report_email') : 'admin@example.com',
+    ];
 
     return parent::buildForm($form, $form_state);
   }
@@ -143,6 +148,7 @@ public function __construct(ConfigFactoryInterface $config_factory) {
       ->set('fixity_content_type', $form_state->getValue('fixity_content_type'))
       ->set('user_name', $form_state->getValue('user_name'))
       ->set('user_pass', $form_state->getValue('user_pass'))
+      ->set('report_email', $form_state->getValue('report_email'))
       ->save();
 
     parent::submitForm($form, $form_state);
