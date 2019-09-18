@@ -56,11 +56,9 @@ class Riprap {
       }
     }
     catch (RequestException $e) {
-       \Drupal::logger('islandora_riprap')->error($e->getMessage());
-       drupal_set_message(t("Sorry, there has been an error connecting to Riprap, please refer to the system log"), 'error');
+      \Drupal::logger('islandora_riprap')->error($e->getMessage());
+      drupal_set_message(t("Sorry, there has been an error connecting to Riprap, please refer to the system log"), 'error');
     }
   }
 
 }
-
-

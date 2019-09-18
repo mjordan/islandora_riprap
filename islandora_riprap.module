@@ -1,6 +1,7 @@
 <?php
 
 use Drupal\Component\Utility\Html;
+use Drupal\user\Entity\User;
 
 /**
  * Implements hook_theme().
@@ -51,8 +52,19 @@ function islandora_riprap_page_attachments(array &$attachments) {
  */
 function islandora_riprap_cron() {
   $interval = 7 * 24 * 60 * 60;
-  $next_execution = \Drupal::state()->get('islandora_riprap.next_execution');
+  $next_execution = Drupal::state()->get('islandora_riprap.next_execution');
   $next_execution = !empty($next_execution) ? $next_execution : 0;
+  $role = Drupal::config('islandora_riprap.settings')->get('report_role');
+  $role = $role ? $role : 'administrator';
+  $ids = \Drupal::entityQuery('user')
+    ->condition('status', 1)
+    ->condition('roles', $role)
+    ->execute();
+  $users = User::loadMultiple($ids);
+  foreach ($users as $user) {
+    $emails[] = $user->getEmail();
+  }
+
   if (REQUEST_TIME >= $next_execution) {
     $query = \Drupal::database()->select('fixity_check_event', 'f');
     $query->fields('f');
@@ -67,7 +79,6 @@ function islandora_riprap_cron() {
       $mailManager = \Drupal::service('plugin.manager.mail');
       $module = 'islandora_riprap';
       $key = 'notify_failure';
-      $to = \Drupal::config('islandora_riprap.settings')->get('report_email');
       $wrapper = "<html><body>";
       $intro = "$wrapper<p>The following Fedora assets have failed their fixity checks.</p>";
       $body = "<p>";
@@ -81,16 +92,19 @@ function islandora_riprap_cron() {
       $params['title'] = t('Fixity Failures.  Auto Email from Islandora Riprap');
       $langcode = \Drupal::currentUser()->getPreferredLangcode();
       $send = TRUE;
-      $result = $mailManager->mail($module, $key, $to, $langcode, $params, 'alanjarlathstanley@gmail.com', $send);
-      if ($result['result'] != TRUE) {
-        $message = t('There was a problem sending your email notification to @email.', ['@email' => $to]);
-        drupal_set_message($message, 'error');
-        \Drupal::logger('mail-log')->error($message);
-        return;
+      foreach ($emails as $to) {
+        $result = $mailManager->mail($module, $key, $to, $langcode, $params, Drupal::config('system.site')->get('mail'), $send);
+        if ($result['result'] != TRUE) {
+          $message = t('There was a problem sending your email notification to @email.', ['@email' => $to]);
+          drupal_set_message($message, 'error');
+          Drupal::logger('mail-log')->error($message);
+          return;
+        }
       }
     }
-    \Drupal::state()->set('islandora_riprap.next_execution', REQUEST_TIME + $interval);
+    Drupal::state()->set('islandora_riprap.next_execution', REQUEST_TIME + $interval);
   }
+
 }
 
 /**
