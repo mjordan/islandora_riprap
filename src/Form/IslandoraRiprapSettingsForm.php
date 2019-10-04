@@ -38,11 +38,7 @@ public function __construct(ConfigFactoryInterface $config_factory) {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $roles = user_roles();
-    $role_options = [];
-    foreach ($roles as $role) {
-      $role_options[$role->id()] = $role->label();
-    }
+
     $actual_path = \Drupal::service('file_system')->realpath('private://');
     if(!$actual_path) {
       $this->messenger()->addWarning("No Private File Folder found, please contact system administrator");
@@ -128,14 +124,6 @@ public function __construct(ConfigFactoryInterface $config_factory) {
       '#title' => t('Current configuration'),
     ];
 
-    $form['report_role'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Role to receive email'),
-      '#description' => t("All members of this role will bve notified by email of fixity failures."),
-      '#default_value' => $config->get('report_role') ? $config->get('report_role') : 'administrator',
-      '#options' => $role_options,
-    ];
-
     return parent::buildForm($form, $form_state);
   }
 
@@ -155,7 +143,6 @@ public function __construct(ConfigFactoryInterface $config_factory) {
       ->set('fixity_content_type', $form_state->getValue('fixity_content_type'))
       ->set('user_name', $form_state->getValue('user_name'))
       ->set('user_pass', $form_state->getValue('user_pass'))
-      ->set('report_role', $form_state->getValue('report_role'))
       ->save();
 
     parent::submitForm($form, $form_state);
