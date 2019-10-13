@@ -18,7 +18,6 @@ function islandora_riprap_requirements($phase) {
       $response = $client->request('HEAD', $riprap_endpoint);
       $riprap_response_code = $response->getStatusCode();
     }
-    // catch (ConnectException $e) {
     catch (Exception $e) {
       \Drupal::logger('islandora_riprap')->error($e->getMessage());
     }
