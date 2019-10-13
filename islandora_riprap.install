@@ -18,23 +18,25 @@ function islandora_riprap_requirements($phase) {
       $response = $client->request('HEAD', $riprap_endpoint);
       $riprap_response_code = $response->getStatusCode();
     }
-    catch (ConnectException $e) {
+    // catch (ConnectException $e) {
+    catch (Exception $e) {
       \Drupal::logger('islandora_riprap')->error($e->getMessage());
     }
-
-    if ($riprap_response_code == 200) {
-      $requirements['islandora_riprap_microservice_available'] = [
-        'title' => t("Islandora Ripap"),
-        'description' => t("Riprap is running at @endpoint", array('@endpoint' => $riprap_endpoint)),
-        'severity' => REQUIREMENT_INFO,
-      ];
-    }
-    else {
-      $requirements['islandora_riprap_microservice_available'] = [
-        'title' => t("Islandora Ripap"),
-        'description' => t("Riprap not found or is not running at @endpoint", array('@endpoint' => $riprap_endpoint)),
-        'severity' => REQUIREMENT_ERROR,
-      ];
+    finally {
+      if ($riprap_response_code == 200) {
+        $requirements['islandora_riprap_microservice_available'] = [
+          'title' => t("Islandora Riprap"),
+          'description' => t("Riprap is running at @endpoint", array('@endpoint' => $riprap_endpoint)),
+          'severity' => REQUIREMENT_INFO,
+        ];
+      }
+      else {
+        $requirements['islandora_riprap_microservice_available'] = [
+          'title' => t("Islandora Riprap"),
+          'description' => t("Riprap not found or is not running at @endpoint", array('@endpoint' => $riprap_endpoint)),
+          'severity' => REQUIREMENT_ERROR,
+        ];
+      }
     }
   }
 
