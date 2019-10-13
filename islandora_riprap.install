@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * Implements hook_requirements().
+ */
+function islandora_riprap_requirements($phase) {
+  $requirements = [];
+
+  if ($phase == 'runtime') {
+    // Check whether Riprap's endpoint is available.
+    $config = \Drupal::config('islandora_riprap.settings');
+    $riprap_endpoint = $config->get('riprap_rest_endpoint') ?: 'http://localhost:8000/api/fixity';
+
+    $riprap_response_code = 0;
+    try {
+      $client = \Drupal::httpClient();
+      // Assumes Riprap requires no authentication (e.g., it's behind the Symfony or other firewall).
+      $options = [
+        'http_errors' => false,
+        'headers' => ['Resource-ID' => 'placeholder_resource_id'],
+      ];
+      $response = $client->request('GET', $riprap_endpoint, $options);
+      $riprap_response_code = $response->getStatusCode();
+    }
+    catch (TransferException $e) {
+      \Drupal::logger('islandora_riprap')->error($e->getMessage());
+    }
+
+    dsm($riprap_response_code);
+
+    if ($riprap_repsonse_code == 200) {
+      $requirements['islandora_riprap_microservice_available'] = [
+        'title' => t("Islandora Ripap"),
+        'description' => t("Riprap is running at @endpoint", array('@endpoint' => $riprap_endpoint)),
+        'severity' => REQUIREMENT_INFO,
+      ];
+    }
+    else {
+      $requirements['islandora_riprap_microservice_available'] = [
+        'title' => t("Islandora Ripap"),
+        'description' => t("Riprap not found or is not running at @endpoint", array('@endpoint' => $riprap_endpoint)),
+        'severity' => REQUIREMENT_ERROR,
+      ];
+    }
+  }
+
+  return $requirements;
+}
+
