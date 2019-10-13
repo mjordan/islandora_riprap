@@ -16,19 +16,16 @@ function islandora_riprap_requirements($phase) {
       $client = \Drupal::httpClient();
       // Assumes Riprap requires no authentication (e.g., it's behind the Symfony or other firewall).
       $options = [
-        'http_errors' => false,
         'headers' => ['Resource-ID' => 'placeholder_resource_id'],
       ];
       $response = $client->request('GET', $riprap_endpoint, $options);
       $riprap_response_code = $response->getStatusCode();
     }
-    catch (TransferException $e) {
+    catch (ConnectException $e) {
       \Drupal::logger('islandora_riprap')->error($e->getMessage());
     }
 
-    dsm($riprap_response_code);
-
-    if ($riprap_repsonse_code == 200) {
+    if ($riprap_response_code == 200) {
       $requirements['islandora_riprap_microservice_available'] = [
         'title' => t("Islandora Ripap"),
         'description' => t("Riprap is running at @endpoint", array('@endpoint' => $riprap_endpoint)),
