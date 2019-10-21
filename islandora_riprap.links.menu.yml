@@ -1,5 +1,5 @@
 system.islandora_riprap_settings:
-  title: 'Fixity auditing'
+  title: 'Islandora Riprap'
   parent: system.admin_config_islandora
   route_name: islandora_riprap.settings
   description: 'Configure fixity auditing reports produced by the Islandora Riprap module.'
