@@ -191,8 +191,6 @@ plugins.postcheck: ['PluginPostCheckCopyFailures']
 # Absolute or relative to the Riprap application directory.
 failures_log_path: '/tmp/riprap_failed_events.log'
 EOF;
-
-    $destination = "$this->config_filepath/islandora_riprap_config.yml";
   $success = file_save_data($riprap_config, "$this->config_filepath/islandora_riprap_config.yml", FILE_EXISTS_REPLACE);
   }
 
