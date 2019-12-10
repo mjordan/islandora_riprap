@@ -29,18 +29,18 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       'islandora_riprap.settings',
     ];
   }
-public function __construct(ConfigFactoryInterface $config_factory) {
+
+  public function __construct(ConfigFactoryInterface $config_factory) {
     $this->config_filepath = "private://riprap_config";
-  parent::__construct($config_factory);
-}
+    parent::__construct($config_factory);
+  }
 
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-
     $actual_path = \Drupal::service('file_system')->realpath('private://');
-    if(!$actual_path) {
+    if (!$actual_path) {
       $this->messenger()->addWarning("No Private File Folder found, please contact system administrator");
     }
 
@@ -58,67 +58,104 @@ public function __construct(ConfigFactoryInterface $config_factory) {
     $replacement_string = "drupal_media_auth: ['xxxxx', 'xxxxx']";
     $current_config = preg_replace('/drupal_media_auth.*\]/', $replacement_string, $current_config);
 
+    $form['riprap_mode'] = array(
+      '#type' => 'radios',
+      '#title' => $this->t('Riprap location'),
+      '#options' => [
+        'remote' => $this->t('Remote'),
+        'local' => $this->t('Local'),
+      ],
+      '#default_value' => $config->get('riprap_mode'),
+      '#attributes' => [
+        'id' => 'riprap_mode',
+      ],
+    );
+
     $form['riprap_rest_endpoint'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Riprap microservice REST endpoint'),
       '#description' => $this->t('Do not include the trailing /.'),
-      '#default_value' => $config->get('riprap_rest_endpoint') ? $config->get('riprap_rest_endpoint') : 'http://localhost:8000/api/fixity',
+      '#default_value' => $config->get('riprap_rest_endpoint'),
+      '#states' => [
+        'visible' => [
+          ':input[id=riprap_mode]' => ['value' => 'remote'],
+        ],
+      ],
+    ];
+    $form['riprap_local_directory'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Absolute path to your local Riprap installation directory'),
+      '#description' => $this->t('For example, "/var/local/riprap". Used only when running in "local" mode. Ignore if you are using Riprap as a microservice.'),
+      '#default_value' => $config->get('riprap_local_directory'),
+      '#states' => [
+        'visible' => [
+          ':input[id=riprap_mode]' => ['value' => 'local'],
+        ],
+      ],
     ];
     $form['number_of_events'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Number of events to show in report. Leave empty to show all.'),
-      '#default_value' => $config->get('number_of_events') ? $config->get('number_of_events') : '10',
+      '#title' => $this->t('Number of events to show in "Details" report. Leave empty to show all.'),
+      '#default_value' => $config->get('number_of_events'),
     ];
     $form['gemini_rest_endpoint'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Gemini microservice REST endpoint'),
       '#description' => $this->t('Do not include the trailing /.'),
-      '#default_value' => $config->get('gemini_rest_endpoint') ? $config->get('gemini_rest_endpoint') : 'http://localhost:8000/gemini',
+      '#default_value' => $config->get('gemini_rest_endpoint'),
     ];
     $form['use_drupal_urls'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Use Drupal URLs for media instead of Fedora URLs. Check this box only if you are not using Fedora.'),
-      '#default_value' => $config->get('use_drupal_urls') ? $config->get('use_drupal_urls') : FALSE,
+      '#default_value' => $config->get('use_drupal_urls'),
     ];
     $form['log_riprap_warnings'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Log warnings about missing resources and fixity events.'),
-      '#default_value' => !$config->get('log_riprap_warnings') ? $config->get('log_riprap_warnings') : TRUE,
+      '#default_value' => $config->get('log_riprap_warnings'),
     ];
-    $form['fixity_content_type'] = [
+
+    $form['riprap_config'] = [
+      '#type' => 'details',
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#title' => t('Riprap configuration settings (optional)'),
+      '#description' => t('After you save this form, the content in the "Details" section below can be copied into a YAML file to use as your Riprap microservice configuration. <p>Note that to use this feature, you must enable and configure Drupal\'s private filesystem.</p>'),
+      ];
+    $form['riprap_config']['fixity_content_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Content type to be examined'),
       '#options' => node_type_get_names(),
       '#description' => $this->t('Media of this content type will be checked'),
-      '#default_value' => $config->get('fixity_content_type') ? $config->get('fixity_content_type') : 'Repository Item',
+      '#default_value' => $config->get('fixity_content_type'),
     ];
-    $form['fixity_terms'] = [
+    $form['riprap_config']['fixity_terms'] = [
       '#type' => 'select',
       '#title' => $this->t('Media Use terms'),
       '#description' => $this->t('Media tagged with these terms will be checked. Seperate terms with commas.'),
-      '#default_value' => $config->get('fixity_terms') ? $config->get('fixity_terms') : array_search('Original File', $term_data),
+      '#default_value' => $config->get('fixity_terms'),
       '#options' => $term_data,
     ];
-    $form['user_name'] = [
+    $form['riprap_config']['user_name'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Drupal user'),
       '#description' => $this->t('User name with media access permsissions'),
-      '#default_value' => $config->get('user_name') ? $config->get('user_name') : '',
+      '#default_value' => $config->get('user_name'),
     ];
-    $form['user_pass'] = [
+    $form['riprap_config']['user_pass'] = [
       '#type' => 'password',
       '#title' => $this->t('Drupal password'),
       '#description' => $this->t('Password for user with media access permsissions'),
-      '#default_value' => $config->get('user_pass') ? $config->get('user_pass') : '',
+      '#default_value' => $config->get('user_pass'),
     ];
 
-    $form['config'] = [
+    $form['riprap_config']['riprap_config_output'] = [
       '#type' => 'details',
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
-      '#title' => t('Current configuration'),
+      '#title' => t('Details'),
       ];
-    $form['config']['current setup'] = [
+    $form['riprap_config']['riprap_config_output']['current setup'] = [
       '#description' => t('Username and password ha\ve been obfuscated'),
       '#markup' => $current_config,
       '#title' => t('Current configuration'),
@@ -127,14 +164,30 @@ public function __construct(ConfigFactoryInterface $config_factory) {
     return parent::buildForm($form, $form_state);
   }
 
+    /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    if ($form_state->getValue('riprap_mode') == 'local') {
+      if (!file_exists(trim($form_state->getValue('riprap_local_directory')))) {
+        $form_state->setErrorByName(
+          'riprap_local_directory',
+          $this->t('Cannot find the Riprap installation directory at the path specified.')
+        );
+      }
+    }
+  }
+
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
-    $this->persistConfig($values);
+    $this->persistRiprapConfig($values);
     $this->configFactory->getEditable('islandora_riprap.settings')
+      ->set('riprap_mode', $form_state->getValue('riprap_mode'))
       ->set('riprap_rest_endpoint', rtrim($form_state->getValue('riprap_rest_endpoint'), '/'))
+      ->set('riprap_local_directory', rtrim($form_state->getValue('riprap_local_directory'), '/'))
       ->set('number_of_events', $form_state->getValue('number_of_events'))
       ->set('gemini_rest_endpoint', rtrim($form_state->getValue('gemini_rest_endpoint'), '/'))
       ->set('use_drupal_urls', $form_state->getValue('use_drupal_urls'))
@@ -148,7 +201,13 @@ public function __construct(ConfigFactoryInterface $config_factory) {
     parent::submitForm($form, $form_state);
   }
 
-  public function persistConfig($values) {
+  /**
+   * Saves a Riprap configuration YAML file.
+   *
+   * @param array $values
+   *    The form values.
+   */
+  public function persistRiprapConfig($values) {
     $base_url = \Drupal::request()->getSchemeAndHttpHost();
     if (!file_exists($this->config_filepath)) {
       mkdir($this->config_filepath, 0777, true);
@@ -193,6 +252,5 @@ failures_log_path: '/tmp/riprap_failed_events.log'
 EOF;
   $success = file_save_data($riprap_config, "$this->config_filepath/islandora_riprap_config.yml", FILE_EXISTS_REPLACE);
   }
-
 }
 

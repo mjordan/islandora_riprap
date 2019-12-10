@@ -12,7 +12,9 @@ class Riprap {
 
   public function __construct() {
     $config = \Drupal::config('islandora_riprap.settings');
+    $this->riprap_mode = $config->get('riprap_mode') ?: 'remote';
     $this->riprap_endpoint = $config->get('riprap_rest_endpoint') ?: 'http://localhost:8000/api/fixity';
+    $this->riprap_local_directory = $config->get('riprap_local_directory') ?: '';
     $this->number_of_events = $config->get('number_of_events') ?: 10;
     $this->show_warnings = !$config->get('show_riprap_warnings') ? $config->get('show_riprap_warnings') : TRUE;
   }
@@ -22,18 +24,15 @@ class Riprap {
    *
    * @param string $resource_id
    *   The URI of the resource.
-   * @param string $source
-   *   The source of the event data, either 'remote' or 'local'.
-   *   'remote' is from Riprap as an HTTP microservice; 'local'
-   *   is from Riprap running as a command-line utility.
    *
    * @return string|bool
    *   The raw JSON response body, or false.
    */
-  public function getEvents($resource_id, $source = 'remote') {
-    if ($source = 'local') {
+  public function getEvents($resource_id) {
+    if ($this->riprap_mode == 'local') {
       return $this->getEventsFromLocalInstance($resource_id);
     }
+
     try {
       $client = \Drupal::httpClient();
       // Assumes Riprap requires no authentication (e.g., it's behind the Symfony or other firewall).
@@ -57,7 +56,7 @@ class Riprap {
         return json_encode(array('riprap_status' => 404, 'message' => $status_message));
       }
       else {
-	\Drupal::messenger()->addMessage($this->t('Riprap appears to not have any events for @resource_id.', ['@resource_id' => $resource_id]), 'warning');
+	\Drupal::messenger()->addMessage($this->t('Riprap does not have any fixity events for @resource_id.', ['@resource_id' => $resource_id]), 'warning');
         if ($this->show_warnings) {
           if ($resource_id !== 'Not in Fedora') {
             \Drupal::logger('islandora_riprap')->error('HTTP response code returned by Riprap for request to @resource_id: @code', array('@code' => $code, '@resource_id' => $resource_id));
@@ -81,11 +80,14 @@ class Riprap {
    *   The raw JSON response body, or false.
    */
   public function getEventsFromLocalInstance($resource_id) {
-      $riprap_directory = '/home/vagrant/riprap';
+      \Drupal::logger('islandora_riprap')->debug($this->number_of_events);
       $riprap_cmd = ['./bin/console', 'app:riprap:get_events', '--output_format=json', '--resource_id=' . $resource_id];
+      if ($this->number_of_events != '') {
+        $riprap_cmd[] = '--limit=' . $this->number_of_events;
+      }
 
       $process = new Process($riprap_cmd);
-      $process->setWorkingDirectory($riprap_directory);
+      $process->setWorkingDirectory($this->riprap_local_directory);
       $process->run();
 
       if ($process->isSuccessful()) {
