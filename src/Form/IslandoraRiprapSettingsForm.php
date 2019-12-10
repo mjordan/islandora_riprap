@@ -77,13 +77,13 @@ public function __construct(ConfigFactoryInterface $config_factory) {
     ];
     $form['use_drupal_urls'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Use Drupal URLs for media instead of Fedora URLs.'),
+      '#title' => $this->t('Use Drupal URLs for media instead of Fedora URLs. Check this box only if you are not using Fedora.'),
       '#default_value' => $config->get('use_drupal_urls') ? $config->get('use_drupal_urls') : FALSE,
     ];
-    $form['show_riprap_warnings'] = [
+    $form['log_riprap_warnings'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Show and log warnings about missing resources and fixity events.'),
-      '#default_value' => !$config->get('show_riprap_warnings') ? $config->get('show_riprap_warnings') : TRUE,
+      '#title' => $this->t('Log warnings about missing resources and fixity events.'),
+      '#default_value' => !$config->get('log_riprap_warnings') ? $config->get('log_riprap_warnings') : TRUE,
     ];
     $form['fixity_content_type'] = [
       '#type' => 'select',
@@ -138,7 +138,7 @@ public function __construct(ConfigFactoryInterface $config_factory) {
       ->set('number_of_events', $form_state->getValue('number_of_events'))
       ->set('gemini_rest_endpoint', rtrim($form_state->getValue('gemini_rest_endpoint'), '/'))
       ->set('use_drupal_urls', $form_state->getValue('use_drupal_urls'))
-      ->set('show_riprap_warnings', $form_state->getValue('show_riprap_warnings'))
+      ->set('log_riprap_warnings', $form_state->getValue('log_riprap_warnings'))
       ->set('fixity_terms', $form_state->getValue('fixity_terms'))
       ->set('fixity_content_type', $form_state->getValue('fixity_content_type'))
       ->set('user_name', $form_state->getValue('user_name'))

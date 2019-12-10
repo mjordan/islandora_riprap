@@ -42,20 +42,14 @@ class IslandoraRiprapController extends ControllerBase {
      $riprap_output = $riprap->getEvents($binary_resource_url);
 
      if (!$riprap_output) {
-       drupal_set_message(t('Cannot retrieve fixity events from Riprap. See the system log for more information.'), 'error');
+       \Drupal::messenger()->addMessage($this->t('Cannot retrieve fixity events from Riprap. See the system log for more information.', []), 'error');
        return array();
      }
 
      $riprap_output = json_decode($riprap_output, true);
      if ($this->show_warnings) {
        if (count($riprap_output) == 0 && $binary_resource_url != 'Not in Fedora') {
-         drupal_set_message(
-           t('Riprap appears to not have any fixity events for @binary_resource_url.',
-             array('@binary_resource_url' => $binary_resource_url)
-           ),
-           'warning',
-           TRUE
-         );
+         \Drupal::messenger()->addMessage($this->t('No Riprap events for @binary_resource_url (Media @mid).', ['@binary_resource_url' => $binary_resource_url, '@mid' => $mid]), 'warning');
          return array();
        }
      }
