@@ -2,4 +2,4 @@ services:
   islandora_riprap.riprap:
     class: Drupal\islandora_riprap\Riprap\Riprap
   islandora_riprap.utils:
-    class: Drupal\islandora_riprap\IslandoraRiprapUtils
+    class: Drupal\islandora_riprap\Riprap\IslandoraRiprapUtils

@@ -3,8 +3,6 @@
 namespace Drupal\islandora_riprap\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\islandora_riprap\Riprap\Riprap;
-use Drupal\islandora_riprap\Riprap\IslandoraRiprapUtils;
 
 /**
 * Controller.
@@ -25,12 +23,12 @@ class IslandoraRiprapController extends ControllerBase {
    * @return array
    */
    public function main() {
-     $riprap = new Riprap();
+     $riprap = \Drupal::service('islandora_riprap.riprap');
      $current_path = \Drupal::service('path.current')->getPath();
      $path_args = explode('/', $current_path);
      $mid = $path_args[2];
 
-     $utils = new IslandoraRiprapUtils();
+     $utils = \Drupal::service('islandora_riprap.utils');
      $binary_resource_uuid = $utils->getFileUuid($mid);
      if ($this->use_drupal_urls) {
        $binary_resource_url = $utils->getLocalUrl($mid);

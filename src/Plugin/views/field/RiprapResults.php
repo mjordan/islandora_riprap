@@ -4,8 +4,6 @@ namespace Drupal\islandora_riprap\Plugin\views\field;
 
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
-use Drupal\islandora_riprap\Riprap\Riprap;
-use Drupal\islandora_riprap\Riprap\IslandoraRiprapUtils;
 
 /**
  * Field plugin that renders data for Media from Riprap.
@@ -29,8 +27,8 @@ class RiprapResults extends FieldPluginBase {
     $config = \Drupal::config('islandora_riprap.settings');
     $this->use_drupal_urls = $config->get('use_drupal_urls') ?: FALSE;
 
-    $utils = new IslandoraRiprapUtils();
-    $riprap = new Riprap();
+    $utils = \Drupal::service('islandora_riprap.utils');
+    $riprap = \Drupal::service('islandora_riprap.riprap');
 
     $media = $value->_entity;
     $mid = $media->id();

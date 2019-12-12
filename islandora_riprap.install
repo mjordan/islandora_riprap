@@ -5,6 +5,12 @@
  */
 function islandora_riprap_requirements($phase) {
   $requirements = [];
+  $utils = \Drupal::service('islandora_riprap.utils');
+  $chart_link = \Drupal\Core\Link::createFromRoute('Failed fixity events report',
+    'islandora_riprap.chart',
+    [],
+    ['attributes' => ['target' => '_blank', 'title' => 'This report will open in a new tab']]
+  );
 
   if ($phase == 'runtime') {
     $config = \Drupal::config('islandora_riprap.settings');
@@ -28,7 +34,8 @@ function islandora_riprap_requirements($phase) {
         if ($riprap_response_code == 200) {
           $requirements['islandora_riprap_microservice_available'] = [
             'title' => t("Islandora Riprap"),
-            'description' => t("Riprap is running at @endpoint", array('@endpoint' => $riprap_endpoint)),
+            // 'description' => t("Riprap is running at @endpoint. @chart_link.", array('@endpoint' => $riprap_endpoint, '@chart_link' => $chart_link->toString())),
+            'description' => t("Riprap is running at @endpoint. @chart_link.", array('@endpoint' => $riprap_endpoint, '@chart_link' => $utils->getLinkToFailedFixityEventsReport())),
             'severity' => REQUIREMENT_INFO,
           ];
         }
@@ -47,7 +54,8 @@ function islandora_riprap_requirements($phase) {
       if (file_exists($riprap_directory)) {
           $requirements['riprap_directory_exists'] = [
             'title' => t("Islandora Riprap"),
-            'description' => t("Riprap is installed at @directory", array('@directory' => $riprap_directory)),
+            // 'description' => t("Riprap is installed at @directory. @chart_link.", array('@directory' => $riprap_directory, '@chart_link' => $chart_link->toString())),
+            'description' => t("Riprap is installed at @directory. @chart_link.", array('@directory' => $riprap_directory, '@chart_link' => $utils->getLinkToFailedFixityEventsReport())),
             'severity' => REQUIREMENT_INFO,
           ];
       }

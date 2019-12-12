@@ -25,3 +25,10 @@ islandora_riprap.settings:
   requirements:
     _permission: 'administer site configuration'
 
+islandora_riprap.chart:
+  path: '/admin/reports/islandora_riprap'
+  defaults:
+    _controller: '\Drupal\islandora_riprap\Controller\IslandoraRiprapChartController::main'
+    _title: 'Failed Fixity Events'
+  requirements:
+    _permission: 'administer site configuration'

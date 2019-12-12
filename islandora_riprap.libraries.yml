@@ -5,3 +5,12 @@ islandora_riprap:
   dependencies:
     - core/jquery
     - core/jquery.once
+islandora_riprap_chart:
+  version: 1.x
+  js:
+    https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js: { type: external }
+    js/islandora_riprap_chart.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupalSettings

@@ -4,8 +4,6 @@ namespace Drupal\islandora_riprap\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\Response;
-use Drupal\islandora_riprap\Riprap\Riprap;
-use Drupal\islandora_riprap\Riprap\IslandoraRiprapUtils;
 
 /**
 * Controller.
@@ -21,6 +19,8 @@ class IslandoraRiprapPremisController extends ControllerBase {
 
   /**
    * Get the Riprap data for the current Media entity and render it as Turtle.
+   *
+   * Note: this is just a placeholder with no Riprap-specific functionality.
    *
    * @return string
    */
