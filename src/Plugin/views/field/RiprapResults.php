@@ -41,7 +41,7 @@ class RiprapResults extends FieldPluginBase {
       $binary_resource_url = $utils->getFedoraUrl($binary_resource_uuid);
     }
 
-    $riprap_output = $riprap->getEvents($binary_resource_url);
+    $riprap_output = $riprap->getEvents(array('output_format' => 'json', 'resource_id' => $binary_resource_url));
     $events = (json_decode($riprap_output, true));
 
     // Look for events with an 'event_outcome' of 'fail'.

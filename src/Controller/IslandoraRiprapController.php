@@ -37,7 +37,7 @@ class IslandoraRiprapController extends ControllerBase {
        $binary_resource_url = $utils->getFedoraUrl($binary_resource_uuid);
      } 
 
-     $riprap_output = $riprap->getEvents($binary_resource_url);
+     $riprap_output = $riprap->getEvents(array('output_format' => 'json', 'resource_id' => $binary_resource_url));
 
      if (!$riprap_output) {
        \Drupal::messenger()->addMessage($this->t('Cannot retrieve fixity events from Riprap for this media. This has been logged, but please contact the system administrator.'), 'error');

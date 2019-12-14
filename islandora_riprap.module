@@ -44,47 +44,32 @@ function islandora_riprap_page_attachments(array &$attachments) {
     $attachments['#attached']['library'][] = 'islandora_riprap/islandora_riprap';
   }
 
-  // if (\Drupal::routeMatch()->getRouteName() == 'islandora_riprap.chart') {
   if ($current_path == '/admin/reports/islandora_riprap') {
     $attachments['#attached']['library'][] = 'islandora_riprap/islandora_riprap_chart';
 
-    $riprap_data = islandora_riprap_get_fixity_failure_data();
+    $utils = \Drupal::service('islandora_riprap.utils');
+    $riprap_data = $utils->getFailedFixityEventsReportData();
     $dataset = new StdClass();
-    // $dataset->data = array(1, 3, 10, 0, 0, 0 , 0, 0, 2, 0, 0, 0);
     $dataset->data = array_values($riprap_data);
-    $dataset->label = "Fixity check event failures";
+    $total_failed_events = array_sum(array_values($riprap_data));
+    $dataset->label = t("$total_failed_events failed fixity check events, broken down by month");
     $dataset->pointBackgroundColor = 'red';
+    $dataset->borderColor = 'red';
+    $dataset->borderWidth = 1;
+    $dataset->pointRadius = 1;
+    $dataset->fill = FALSE;
     $dataset->lineTension = 0;
     $line_chart_data = array(
-      // 'labels' => array('2017-11', '2017-12', '2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09', '2018-10'),
       'labels' => array_keys($riprap_data),
       'datasets' => array($dataset),
     );
     $attachments['#attached']['drupalSettings']['islandora_riprap']['chart_data'] = $line_chart_data;
-
-  }
-}
-
-/**
- * For dev only: Fetches data from Riprap's API and collates it into months.
- *
- * return array
- *    An associative array containing keys that are months in yyyy-dd format,
- *    and values that are the counts of 'fail' events in that month.
- */
-function islandora_riprap_get_fixity_failure_data() {
-  $sample_api_response_body = '[{"event_uuid":"76908144-f2c6-4f9b-a3f8-87a4955b7b9e","resource_id":"http:\/\/localhost:8000\/mockrepository\/rest\/899","event_type":"fix","timestamp":"2018-08-01T19:04:20-0800","digest_algorithm":"SHA-1","digest_value":"49ca49195c1b0aa585c76d6fa558694c89a7cba1","event_detail":"","event_outcome":"fail","event_outcome_detail_note":""},{"event_uuid":"279be3ad-56c0-4c31-9543-93d7d4d0996c","resource_id":"http:\/\/localhost:8000\/mockrepository\/rest\/699","event_type":"fix","timestamp":"2018-08-11T19:04:20-0800","digest_algorithm":"SHA-1","digest_value":"8666e1e6084dc8e20443de41f6826d13d4e3b32b","event_detail":"","event_outcome":"fail","event_outcome_detail_note":""},{"event_uuid":"dfb8aeb3-f2fe-4cbd-8c52-951f9911816e","resource_id":"http:\/\/localhost:8000\/mockrepository\/rest\/399","event_type":"fix","timestamp":"2018-10-04T19:04:20-0800","digest_algorithm":"SHA-1","digest_value":"9ed4f29f8b6857ffe123d6e41d5c699edc0d62a1","event_detail":"","event_outcome":"fail","event_outcome_detail_note":""},{"event_uuid":"bd58134f-4b26-4e3e-8c11-ed043dbc685f","resource_id":"http:\/\/localhost:8000\/mockrepository\/rest\/499","event_type":"fix","timestamp":"2018-10-14T19:04:20-0800","digest_algorithm":"SHA-1","digest_value":"edd6ebda641b723cc1bc537c49099c1d5a458138","event_detail":"","event_outcome":"fail","event_outcome_detail_note":""},{"event_uuid":"59206353-b793-4e84-92f5-ee7ef39fa1bb","resource_id":"http:\/\/localhost:8000\/mockrepository\/rest\/599","event_type":"fix","timestamp":"2018-10-28T19:04:20-0800","digest_algorithm":"SHA-1","digest_value":"13b724905530d4de5bfaeb714bc2c7f1f2ee2992","event_detail":"","event_outcome":"fail","event_outcome_detail_note":""},{"event_uuid":"2415ae08-12d0-4531-a655-10e864d1a37b","resource_id":"http:\/\/localhost:8000\/mockrepository\/rest\/99","event_type":"fix","timestamp":"2018-11-01T19:04:20-0800","digest_algorithm":"SHA-1","digest_value":"9a79be611e0267e1d943da0737c6c51be67865a0","event_detail":"","event_outcome":"fail","event_outcome_detail_note":""},{"event_uuid":"e049b2ff-0e3a-453f-bdfd-3da1f9dc28e3","resource_id":"http:\/\/localhost:8000\/mockrepository\/rest\/199","event_type":"fix","timestamp":"2018-11-05T19:04:20-0800","digest_algorithm":"SHA-1","digest_value":"2952aeca0fe15cf310ede96c437acb94b2b208f1","event_detail":"","event_outcome":"fail","event_outcome_detail_note":""},{"event_uuid":"a2eb4de1-df14-4aef-a291-b37ad88e30cd","resource_id":"http:\/\/localhost:8000\/mockrepository\/rest\/299","event_type":"fix","timestamp":"2018-11-14T19:04:20-0800","digest_algorithm":"SHA-1","digest_value":"4b2e392816d93bae3b562a1200b0c7a3f3fd76d4","event_detail":"","event_outcome":"fail","event_outcome_detail_note":""},{"event_uuid":"f9d1312f-9789-4649-95cb-2f5d9b5fa05c","resource_id":"http:\/\/localhost:8000\/mockrepository\/rest\/799","event_type":"fix","timestamp":"2018-10-23T19:04:20-0800","digest_algorithm":"SHA-1","digest_value":"01c0c90bf6c9358e58c84ab8a89e34676a26b823","event_detail":"","event_outcome":"fail","event_outcome_detail_note":""}]';
-  $response_body_array = json_decode($sample_api_response_body, true);
-
-  $months = array();
-  foreach ($response_body_array as $event) {
-    $month = preg_replace('/\-\d\dT.+$/', '', $event['timestamp']);
-    if (in_array($month, array_keys($months))) {
-      $months[$month]++;
+    if ($total_failed_events == 0) {
+      \Drupal::messenger()->addMessage(t('No failed fixity events found.'), 'status');
     }
     else {
-      $months[$month] = 0;
+      \Drupal::messenger()->addMessage(t('Failed fixity check events found. See monthly summary below.'), 'warning');
     }
   }
-  return $months;
 }
+

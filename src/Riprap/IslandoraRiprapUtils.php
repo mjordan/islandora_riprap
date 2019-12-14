@@ -5,13 +5,14 @@ namespace Drupal\islandora_riprap\Riprap;
 use Drupal\media\Entity\Media;
 
 /**
- * Utilities for interacting with a Riprap fixity microservice.
+ * Islandora-specific utilities for interacting with a Riprap fixity microservice.
  */
 class IslandoraRiprapUtils {
 
   public function __construct() {
     $config = \Drupal::config('islandora_riprap.settings');
     $this->gemini_endpoint = $config->get('gemini_rest_endpoint') ?: 'http://localhost:8000/gemini';
+    $this->riprap = \Drupal::service('islandora_riprap.riprap');
   }
 
   /**
@@ -140,5 +141,29 @@ class IslandoraRiprapUtils {
    */
   public function getFixityEventsReportMarkup() {
     return '<div id="islandora-riprap-fail-events-content"><canvas id="islandora-riprap-fail-events-chart"></canvas></div>';
+  }
+
+  /**
+   * Formats Riprap events for use in Chart.js.
+   *
+   * @return array
+   *   Array of yyyy-mm month keys with number of failed events as values.
+   */
+  public function getFailedFixityEventsReportData() {
+    $event_data = $this->riprap->getEvents(array('output_format' => 'json', 'outcome' => 'fail'));
+    $event_data_array = json_decode($event_data, true);
+    // \Drupal::logger('islandora_riprap')->debug(var_export($event_data_array, true));
+    $months = array();
+    foreach ($event_data_array as $event) {
+    \Drupal::logger('islandora_riprap')->debug($event['timestamp']);
+      $month = preg_replace('/\-\d\dT.+$/', '', $event['timestamp']);
+      if (in_array($month, array_keys($months))) {
+        $months[$month]++;
+      }
+      else {
+        $months[$month] = 0;
+      }
+    }
+    return $months;
   }
 }

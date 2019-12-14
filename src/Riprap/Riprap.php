@@ -22,20 +22,21 @@ class Riprap {
   /**
    * Queries the Riprap microservice's REST interface for events about $resource_id.
    *
-   * @param string $resource_id
-   *   The URI of the resource.
+   * @param array $options
+   *   Associative array with keys that are Ripraps's REST and CLI parameters.
    *
    * @return string|bool
    *   The raw JSON response body, or false.
    */
-  public function getEvents($resource_id) {
+  public function getEvents($options) {
     if ($this->riprap_mode == 'local') {
-      return $this->getEventsFromLocalInstance($resource_id);
+      return $this->getEventsFromLocalInstance($options);
     }
 
     try {
-      $client = \Drupal::httpClient();
       // Assumes Riprap requires no authentication (e.g., it's behind the Symfony or other firewall).
+      $client = \Drupal::httpClient();
+      // @todo: Incorporate options from incoming array.
       $options = [
         'http_errors' => false,
         'headers' => ['Resource-ID' => $resource_id],
@@ -73,18 +74,18 @@ class Riprap {
   /**
    * Queries a local copy of Riprap using its command-line interface for events about $resource_id.
    *
-   * @param string $resource_id
-   *   The URI of the resource.
+   * @param array $options
+   *   Associative array with keys that are Ripraps's REST and CLI parameters.
    *
    * @return string|bool
    *   The raw JSON response body, or false.
    */
-  public function getEventsFromLocalInstance($resource_id) {
+  public function getEventsFromLocalInstance($options) {
       \Drupal::logger('islandora_riprap')->debug($this->number_of_events);
-      $riprap_cmd = ['./bin/console', 'app:riprap:get_events', '--output_format=json', '--resource_id=' . $resource_id];
-      if ($this->number_of_events != '') {
-        $riprap_cmd[] = '--limit=' . $this->number_of_events;
-      }
+      $riprap_cmd = ['./bin/console', 'app:riprap:get_events'];
+      foreach ($options as $option_name => $option_value) {
+        $riprap_cmd[] = '--' . $option_name . '=' . $option_value;
+      } 
 
       $process = new Process($riprap_cmd);
       $process->setWorkingDirectory($this->riprap_local_directory);
@@ -99,7 +100,6 @@ class Riprap {
           //['@title' => $title, '@nid' => $nid, '@return_code' => $return_code]
         // );
         // \Drupal::logger('islandora_riprap')->{$logger_level}($message);
-        // $this->messenger()->{$messanger_level}($message);
         return FALSE;
       }
 

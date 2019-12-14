@@ -11,7 +11,18 @@ Javascript that renders a Chart.js line chart.
 
   var IslandoraRiprapLineChart = new Chart(IslandoraRiprapLineChartCanvas, {
     type: 'line',
-    data: IslandoraRiprapLineChartData
+    data: IslandoraRiprapLineChartData,
+    options: {
+        scales: {
+            xAxes: [{
+                type: 'time',
+                time: {
+                    unit: 'month'
+                },
+		distribution: 'linear'
+            }]
+        }
+    }
   });
 
 

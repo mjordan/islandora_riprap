@@ -58,6 +58,9 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
     $replacement_string = "drupal_media_auth: ['xxxxx', 'xxxxx']";
     $current_config = preg_replace('/drupal_media_auth.*\]/', $replacement_string, $current_config);
 
+    $utils = \Drupal::service('islandora_riprap.utils');
+
+    $form['failed_fixity_events_report']['#markup'] = $utils->getLinkToFailedFixityEventsReport();
     $form['riprap_mode'] = array(
       '#type' => 'radios',
       '#title' => $this->t('Riprap location'),
@@ -70,7 +73,6 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
         'id' => 'riprap_mode',
       ],
     );
-
     $form['riprap_rest_endpoint'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Riprap microservice REST endpoint'),

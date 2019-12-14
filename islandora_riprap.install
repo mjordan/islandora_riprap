@@ -6,11 +6,6 @@
 function islandora_riprap_requirements($phase) {
   $requirements = [];
   $utils = \Drupal::service('islandora_riprap.utils');
-  $chart_link = \Drupal\Core\Link::createFromRoute('Failed fixity events report',
-    'islandora_riprap.chart',
-    [],
-    ['attributes' => ['target' => '_blank', 'title' => 'This report will open in a new tab']]
-  );
 
   if ($phase == 'runtime') {
     $config = \Drupal::config('islandora_riprap.settings');
