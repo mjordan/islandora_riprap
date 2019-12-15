@@ -95,6 +95,27 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
         ],
       ],
     ];
+    $form['riprap_local_settings_file'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Absolute path to the settings YAML file used by the local Riprap installation'),
+      '#description' => $this->t('For example, "/var/local/riprap/settings.yml". Used only when running in "local" mode. Ignore if you are using Riprap as a microservice.'),
+      '#default_value' => $config->get('riprap_local_settings_file'),
+      '#states' => [
+        'visible' => [
+          ':input[id=riprap_mode]' => ['value' => 'local'],
+        ],
+      ],
+    ];
+    $form['execute_riprap_in_cron'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Execute Riprap during Drupal cron runs. Only applies to "local" mode.'),
+      '#default_value' => $config->get('execute_riprap_in_cron'),
+      '#states' => [
+        'visible' => [
+          ':input[id=riprap_mode]' => ['value' => 'local'],
+        ],
+      ],
+    ];
     $form['number_of_events'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Number of events to show in "Details" report. Leave empty to show all.'),
@@ -177,6 +198,12 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
           $this->t('Cannot find the Riprap installation directory at the path specified.')
         );
       }
+      if (!file_exists(trim($form_state->getValue('riprap_local_settings_file')))) {
+        $form_state->setErrorByName(
+          'riprap_local_settings_file',
+          $this->t('Cannot find the Riprap settings file at the path specified.')
+        );
+      }
     }
   }
 
@@ -190,6 +217,8 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       ->set('riprap_mode', $form_state->getValue('riprap_mode'))
       ->set('riprap_rest_endpoint', rtrim($form_state->getValue('riprap_rest_endpoint'), '/'))
       ->set('riprap_local_directory', rtrim($form_state->getValue('riprap_local_directory'), '/'))
+      ->set('riprap_local_settings_file', rtrim($form_state->getValue('riprap_local_settings_file'), '/'))
+      ->set('execute_riprap_in_cron', $form_state->getValue('execute_riprap_in_cron'))
       ->set('number_of_events', $form_state->getValue('number_of_events'))
       ->set('gemini_rest_endpoint', rtrim($form_state->getValue('gemini_rest_endpoint'), '/'))
       ->set('use_drupal_urls', $form_state->getValue('use_drupal_urls'))

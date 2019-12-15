@@ -2,11 +2,15 @@
 
 ## Introduction
 
-A Drupal 8 module to provide node-level reports using data from the [Riprap](https://github.com/mjordan/riprap) fixity microservice.
+A Drupal 8 module to provide node-level and repository-level reports using data from the [Riprap](https://github.com/mjordan/riprap) fixity microservice.
 
 ## Overview
 
-Currently under development. So far, adds a "Fixity auditing" field to the "Media" tab (which is actually the output of the "Manage Media" view provided by the Islandora module) showing Fedora URLs for Media associated with the node. Each URL is color coded to indicate whether or not any fixit events have failed, with a link to a full report of the events.
+This module provides the following:
+
+* A "Fixity auditing" field to the "Media" tab (which is actually the output of the "Manage Media" view provided by the Islandora module) showing Fedora URLs for Media associated with the node. Each URL is color coded to indicate whether or not any fixit events have failed, with a link to a full report of the events.
+* A "Failed Fixity Check Events" report that show the numbers of failed events by month.
+* While running in "local" mode, the ability to execute Riprap from within Drupal's cron.
 
 ## Requirements
 
@@ -21,6 +25,8 @@ Currently under development. So far, adds a "Fixity auditing" field to the "Medi
 ## Configuration
 
 > Note: If you are running Islandora in a CLAW Playbook Vagrant machine and Riprap on the Vagrant host machine, start the Riprap web server by running `php bin/console server:start *:8001` in the Riprap directory. Then in Drupal, make sure your "Riprap microservice REST endpoint" setting says "http://10.0.2.2:8001/api/fixity".
+
+### Enabling the Fixity Auditing summaries in each object's Media tab
 
 1. Go to Drupal's "Configuration" menu.
    1. In the "Islandora" section, click on the "Fixity auditing" link.
@@ -44,6 +50,16 @@ The cell is green to indicate that all fixity events for the media file were suc
 If Riprap is not found or is not running at its configured endpoint URL, each cell will contain an error message to that effect:
 
 ![riprap not found](docs/riprap_not_found.png)
+
+### The Failed Fixity Check Events report
+
+There is no separate configuration for this report. It can be accessed either from with the "Fixity Auditing" admin settings form at `admin/config/islandora_riprap/settings`, or from the "Islandora Riprap" row in Drupal's "Status report" list. If Riprap contains no failed fixity check events, you'll see something like:
+
+![no failed fixity events](docs/fixity_events_report_no_failures.png)
+
+If failed events exist, the report will contain the number of events per month:
+
+![failed fixity events](docs/fixity_events_report_failures.png)
 
 ## Current maintainer
 

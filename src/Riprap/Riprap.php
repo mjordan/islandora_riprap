@@ -15,6 +15,7 @@ class Riprap {
     $this->riprap_mode = $config->get('riprap_mode') ?: 'remote';
     $this->riprap_endpoint = $config->get('riprap_rest_endpoint') ?: 'http://localhost:8000/api/fixity';
     $this->riprap_local_directory = $config->get('riprap_local_directory') ?: '';
+    $this->riprap_local_settings_file = $config->get('riprap_local_settings_file') ?: '';
     $this->number_of_events = $config->get('number_of_events') ?: 10;
     $this->show_warnings = !$config->get('show_riprap_warnings') ? $config->get('show_riprap_warnings') : TRUE;
   }
@@ -81,7 +82,6 @@ class Riprap {
    *   The raw JSON response body, or false.
    */
   public function getEventsFromLocalInstance($options) {
-      \Drupal::logger('islandora_riprap')->debug($this->number_of_events);
       $riprap_cmd = ['./bin/console', 'app:riprap:get_events'];
       foreach ($options as $option_name => $option_value) {
         $riprap_cmd[] = '--' . $option_name . '=' . $option_value;
@@ -95,16 +95,29 @@ class Riprap {
         return $process->getOutput();
       }
       else {
-        // $logger_level = 'warning';
-        //$message = t('Request to create Bag for "@title" (node @nid) failed with return code @return_code.',
-          //['@title' => $title, '@nid' => $nid, '@return_code' => $return_code]
-        // );
-        // \Drupal::logger('islandora_riprap')->{$logger_level}($message);
         return FALSE;
       }
+  }
 
+  /**
+   * Executes Riprap's check_fixty command, if running in 'local' mode.  Used in hook_cron().
+   *
+   * @return bool
+   *   TRUE if the command executed, FALSE if not.
+   */
+  public function executeRiprapCheckFixity() {
+      $riprap_cmd = ['./bin/console', 'app:riprap:check_fixity', '--settings=' . $this->riprap_local_settings_file];
+
+      $process = new Process($riprap_cmd);
+      $process->setWorkingDirectory($this->riprap_local_directory);
+      $process->run();
+
+      if ($process->isSuccessful()) {
+        return TRUE;
+      }
+      else {
+        return FALSE;
+      }
   }
 
 }
-
-

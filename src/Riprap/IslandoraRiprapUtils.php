@@ -152,7 +152,6 @@ class IslandoraRiprapUtils {
   public function getFailedFixityEventsReportData() {
     $event_data = $this->riprap->getEvents(array('output_format' => 'json', 'outcome' => 'fail'));
     $event_data_array = json_decode($event_data, true);
-    // \Drupal::logger('islandora_riprap')->debug(var_export($event_data_array, true));
     $months = array();
     foreach ($event_data_array as $event) {
     \Drupal::logger('islandora_riprap')->debug($event['timestamp']);
