@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\islandora_riprap\Form;
+namespace Drupal\islandora_riprap\Plugin\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;

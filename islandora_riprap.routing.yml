@@ -20,7 +20,7 @@ islandora_riprap.premis:
 islandora_riprap.settings:
   path: '/admin/config/islandora_riprap/settings'
   defaults:
-    _form: '\Drupal\islandora_riprap\Form\IslandoraRiprapSettingsForm'
+    _form: '\Drupal\islandora_riprap\Plugin\Form\IslandoraRiprapSettingsForm'
     _title: 'Islandora Riprap'
   requirements:
     _permission: 'administer site configuration'
