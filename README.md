@@ -26,6 +26,15 @@ This module provides the following:
 
 > Note: If you are running Islandora in a CLAW Playbook Vagrant machine and Riprap on the Vagrant host machine, start the Riprap web server by running `php bin/console server:start *:8001` in the Riprap directory. Then in Drupal, make sure your "Riprap microservice REST endpoint" setting says "http://10.0.2.2:8001/api/fixity".
 
+Configuration options for Islandora Riprap are available at `admin/config/islandora_riprap/settings`, or at Configuration > Islandora > Fixity auditing.
+
+### Remote vs. local mode
+
+This module supports two ways of integrating with Riprap, either in "remote" mode or "local" mode.
+
+* In remote mode, Drupal interacts with Riprap over HTTP. This mode allows Riprap to be running on a server separate from the one Drupal is running on. This is the recommended configuration for large site, or for sites that are using Riprap to perform fixity auditing on resources that are not all managed by Islandora.
+* In local mode, Drupal executes Riprap's command-line interface. This means that Riprap needs to be running on the same server as Drupal. This configuration is simpler than the "remote" configuration, but will likely cause performance issues in large Islandora repositories. Local mode also allows you to use Drupal's cron to peridocally perform fixity checks.
+
 ### Enabling the Fixity Auditing summaries in each object's Media tab
 
 1. Go to Drupal's "Configuration" menu.
