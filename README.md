@@ -8,13 +8,13 @@ A Drupal 8 module to provide node-level and repository-level reports using data 
 
 This module provides the following:
 
-* A "Fixity auditing" field to the "Media" tab (which is actually the output of the "Manage Media" view provided by the Islandora module) showing Fedora URLs for Media associated with the node. Each URL is color coded to indicate whether or not any fixit events have failed, with a link to a full report of the events.
+* A "Fixity auditing" field on the "Media" tab (which is actually the output of the "Manage Media" view provided by the Islandora module) showing Fedora URLs for Media associated with the node. Each URL is color coded to indicate whether or not any fixit events have failed, with a link to a full report of the events.
 * A "Failed Fixity Check Events" report that show the numbers of failed events by month.
 * While running in "local" mode, the ability to execute Riprap from within Drupal's cron.
 
 ## Requirements
 
-* [Islandora](https://github.com/Islandora-CLAW/islandora) a.k.a. CLAW
+* [Islandora 8](https://github.com/Islandora/islandora)
 * A [Riprap](https://github.com/mjordan/riprap) fixity microservice.
 
 ## Installation

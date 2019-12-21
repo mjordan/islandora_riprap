@@ -3,7 +3,6 @@
 namespace Drupal\islandora_riprap\Riprap;
 
 use Symfony\Component\Process\Process;
-// use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /**
  * Utilities for interacting with a Riprap fixity microservice.
@@ -16,12 +15,11 @@ class Riprap {
     $this->riprap_endpoint = $config->get('riprap_rest_endpoint') ?: 'http://localhost:8000/api/fixity';
     $this->riprap_local_directory = $config->get('riprap_local_directory') ?: '';
     $this->riprap_local_settings_file = $config->get('riprap_local_settings_file') ?: '';
-    $this->number_of_events = $config->get('number_of_events') ?: 10;
     $this->show_warnings = !$config->get('show_riprap_warnings') ? $config->get('show_riprap_warnings') : TRUE;
   }
 
   /**
-   * Queries the Riprap microservice's REST interface for events about $resource_id.
+   * Queries a remote copy of Riprap using its REST interface for fixity events.
    *
    * @param array $options
    *   Associative array with keys that are Ripraps's REST and CLI parameters.
@@ -37,11 +35,10 @@ class Riprap {
     try {
       // Assumes Riprap requires no authentication (e.g., it's behind the Symfony or other firewall).
       $client = \Drupal::httpClient();
-      // @todo: Incorporate options from incoming array.
       $options = [
         'http_errors' => false,
         'headers' => ['Resource-ID' => $resource_id],
-        'query' => ['limit' => $this->number_of_events, 'sort' => 'desc'],
+        'query' => $options,
       ];
       $response = $client->request('GET', $this->riprap_endpoint, $options);
       $code = $response->getStatusCode();
@@ -73,19 +70,22 @@ class Riprap {
   }
 
   /**
-   * Queries a local copy of Riprap using its command-line interface for events about $resource_id.
+   * Queries a local copy of Riprap using its command-line interface for fixity events.
    *
    * @param array $options
    *   Associative array with keys that are Ripraps's REST and CLI parameters.
    *
    * @return string|bool
-   *   The raw JSON response body, or false.
+   *   The raw JSON output, or false.
    */
   public function getEventsFromLocalInstance($options) {
       $riprap_cmd = ['./bin/console', 'app:riprap:get_events'];
       foreach ($options as $option_name => $option_value) {
         $riprap_cmd[] = '--' . $option_name . '=' . $option_value;
       } 
+
+      // Bug: limit is not being applied.
+      error_log($riprap_cmd, 3, '/tmp/mjlog.txt');
 
       $process = new Process($riprap_cmd);
       $process->setWorkingDirectory($this->riprap_local_directory);

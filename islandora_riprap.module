@@ -52,14 +52,15 @@ function islandora_riprap_page_attachments(array &$attachments) {
     $dataset = new StdClass();
     $dataset->data = array_values($riprap_data);
     $total_failed_events = array_sum($dataset->data);
-    if (count($total_failed_events) > 0) {
-      $dataset->label = t("$total_failed_events failed fixity check events, broken down by month");
+    if ($total_failed_events == 0) {
+      $dataset->label = t("No failed fixity check events. Perfect!");
+      $dataset->borderColor = 'green';
     }
     else {
-      unset($dataset->label);
+      $dataset->label = t("$total_failed_events failed fixity check events, broken down by month");
+      $dataset->borderColor = 'red';
     }
     $dataset->pointBackgroundColor = 'red';
-    $dataset->borderColor = 'red';
     $dataset->borderWidth = 1;
     $dataset->pointRadius = 1;
     $dataset->fill = FALSE;
@@ -103,3 +104,57 @@ function islandora_riprap_cron() {
   }
 
 }
+
+/**
+ * Alter the serialized Turtle.
+ *
+ * @todo: convert Riprap events into Turtle using EasyRDF.
+ *
+ * @param string $nid
+ *   The current node's ID.
+ * @param string $turtle
+ *   The serialized Turtle.
+ */
+function islandora_riprap_islandora_premis_turtle_alter($nid, &$turtle) {
+  $config = \Drupal::config('islandora_riprap.settings');
+  $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
+  $utils = \Drupal::service('islandora.utils');
+  $riprap = \Drupal::service('islandora_riprap.riprap');
+  $islandora_riprap_utils = \Drupal::service('islandora_riprap.utils');
+  $media_source = \Drupal::service('islandora.media_source_service');
+
+  $media = $utils->getMedia($node);
+
+  $prefix = '@prefix crypHashFunc: <http://id.loc.gov/vocabulary/preservation/cryptographicHashFunctions/> .' . "\n" .
+    '@prefix evOutcome: <http://id.loc.gov/vocabulary/preservationevOutcome/> .' . "\n";
+    '@prefix evType: <http://id.loc.gov/vocabulary/preservation/eventType/> .' . "\n";
+  $turtle = $prefix . $turtle;
+
+  if (count($media) > 0) {
+    foreach ($media as $medium) {
+      $file = $media_source->getSourceFile($medium);
+      if ($config->get('use_drupal_urls')) {
+        $binary_resource_url = $islandora_riprap_utils->getLocalUrl($medium->id());
+      }
+      else {
+        $binary_resource_url = $islandora_riprap_utils->getFedoraUrl($file->uuid());
+      }
+      // @todo: Add File. See page 17 of the Guidelines.
+      $turtle = $turtle . "\n<" . $file->uuid() . "> a premis:File ;";
+      $riprap_events = $riprap->getEvents(array('output_format' => 'json', 'resource_id' => $binary_resource_url));
+      $riprap_events = json_decode($riprap_events, TRUE);
+      foreach ($riprap_events as $event) {
+        $turtle = $turtle . "\n        premis:fixity <" . $event['event_uuid'] . "> ;";
+      }
+      foreach ($riprap_events as $event) {
+        $turtle = $turtle . "\n        premis:fixity <" . $event['event_uuid'] . "> .";
+        $turtle = $turtle . "\n<" . $event['event_uuid'] . '> a crypHashFunc:' . $event['digest_algorithm'] . ' ;';
+        $turtle = $turtle . "\n" . '        rdf:value "' . $event['digest_value'] . '" ;';
+        $turtle = $turtle . "\n" . '        evType "fix" ;';
+        $turtle = $turtle . "\n" . '        evOutcome "' . $event['event_outcome'] . '" ;';
+        $turtle = $turtle . "\n" . '        dct:created "' . $event['timestamp'] . '" ;';
+      }
+    }
+  }  
+}
+
