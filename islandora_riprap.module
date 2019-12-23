@@ -125,11 +125,6 @@ function islandora_riprap_islandora_premis_turtle_alter($nid, &$turtle) {
 
   $media = $utils->getMedia($node);
 
-  $prefix = '@prefix crypHashFunc: <http://id.loc.gov/vocabulary/preservation/cryptographicHashFunctions/> .' . "\n" .
-    '@prefix evOutcome: <http://id.loc.gov/vocabulary/preservationevOutcome/> .' . "\n";
-    '@prefix evType: <http://id.loc.gov/vocabulary/preservation/eventType/> .' . "\n";
-  $turtle = $prefix . $turtle;
-
   if (count($media) > 0) {
     foreach ($media as $medium) {
       $file = $media_source->getSourceFile($medium);
@@ -139,22 +134,39 @@ function islandora_riprap_islandora_premis_turtle_alter($nid, &$turtle) {
       else {
         $binary_resource_url = $islandora_riprap_utils->getFedoraUrl($file->uuid());
       }
-      // @todo: Add File. See page 17 of the Guidelines.
-      $turtle = $turtle . "\n<" . $file->uuid() . "> a premis:File ;";
+
+      // Register some namespaces.
+      $ns = new EasyRdf_Namespace();
+      $ns->set('premisObject', 'http://www.loc.gov/premis/rdf/v3/Object');
+      $ns->set('premis', 'http://id.loc.gov/vocabulary/preservation/eventOutcome');
+      $ns->set('crypHashFunc', 'http://id.loc.gov/vocabulary/preservation/cryptographicHashFunctions/');
+      $ns->set('ebucore', 'https://www.ebu.ch/metadata/ontologies/ebucore#');
+
+      // Create the graph from existing Turtle.
+      $graph = new EasyRdf_Graph();
+      $graph->parse($turtle);
+
+      $graph->resource($binary_resource_url, 'premisObject:File');
+      $graph->add($binary_resource_url, 'premis:size', $file->getSize());
+      $graph->add($binary_resource_url, 'premis:compositionLevel', 0);
+      $graph->add($binary_resource_url, 'ebucore:hasMimeType', $file->getMimeType());
+
+      // Get fixity events and express them as PREMIS RDF.
       $riprap_events = $riprap->getEvents(array('output_format' => 'json', 'resource_id' => $binary_resource_url));
       $riprap_events = json_decode($riprap_events, TRUE);
       foreach ($riprap_events as $event) {
-        $turtle = $turtle . "\n        premis:fixity <" . $event['event_uuid'] . "> ;";
+        $graph->add($binary_resource_url, 'premis:fixity', $event['event_uuid']);
       }
+
       foreach ($riprap_events as $event) {
-        $turtle = $turtle . "\n        premis:fixity <" . $event['event_uuid'] . "> .";
-        $turtle = $turtle . "\n<" . $event['event_uuid'] . '> a crypHashFunc:' . $event['digest_algorithm'] . ' ;';
-        $turtle = $turtle . "\n" . '        rdf:value "' . $event['digest_value'] . '" ;';
-        $turtle = $turtle . "\n" . '        evType "fix" ;';
-        $turtle = $turtle . "\n" . '        evOutcome "' . $event['event_outcome'] . '" ;';
-        $turtle = $turtle . "\n" . '        dct:created "' . $event['timestamp'] . '" ;';
+        $fixity_event = $graph->resource($event['event_uuid'], ['http://id.loc.gov/vocabulary/preservation/eventType/fix', 'crypHashFunc:' . $event['digest_algorithm']]);
+        $fixity_event->set('rdf:value', $event['digest_value']);
+        $fixity_event->set('dc:created', $event['timestamp']);
+        $fixity_event->set('premis:outcome', $event['event_outcome']);
       }
+      $turtle = $graph->serialise('turtle');
     }
   }  
+
 }
 

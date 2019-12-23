@@ -31,7 +31,6 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
   }
 
   public function __construct(ConfigFactoryInterface $config_factory) {
-    $this->config_filepath = "private://riprap_config";
     parent::__construct($config_factory);
   }
 
@@ -39,24 +38,12 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $actual_path = \Drupal::service('file_system')->realpath('private://');
-    if (!$actual_path) {
-      $this->messenger()->addWarning("No Private File Folder found, please contact system administrator");
-    }
-
     $config = $this->config('islandora_riprap.settings');
     $vid = 'islandora_media_use';
     $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
     foreach ($terms as $term) {
       $term_data[$term->tid] = $term->name;
     }
-
-    $current_config = nl2br(file_get_contents("{$this->config_filepath}/islandora_riprap_config.yml"));
-    if (!$current_config) {
-      $current_config = t("No saved configuration has been found.");
-    }
-    $replacement_string = "drupal_media_auth: ['xxxxx', 'xxxxx']";
-    $current_config = preg_replace('/drupal_media_auth.*\]/', $replacement_string, $current_config);
 
     $utils = \Drupal::service('islandora_riprap.utils');
 
@@ -142,8 +129,8 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       '#type' => 'details',
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
-      '#title' => t('Riprap configuration settings (optional)'),
-      '#description' => t('After you save this form, the content in the "Details" section below can be copied into a YAML file to use as your Riprap microservice configuration. <p>Note that to use this feature, you must enable and configure Drupal\'s private filesystem.</p>'),
+      '#title' => t('Generate Riprap configuration settings (optional)'),
+      '#description' => t('This section of the form allows you to generate a configuration file for Riprap. After you save this form, the content in the "Configuration file contents" section below can be copied into a YAML file to use as your Riprap microservice configuration.'),
       ];
     $form['riprap_config']['fixity_content_type'] = [
       '#type' => 'select',
@@ -155,7 +142,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
     $form['riprap_config']['fixity_terms'] = [
       '#type' => 'select',
       '#title' => $this->t('Media Use terms'),
-      '#description' => $this->t('Media tagged with these terms will be checked. Seperate terms with commas.'),
+      '#description' => $this->t('Media tagged with these terms will be checked.'),
       '#default_value' => $config->get('fixity_terms'),
       '#options' => $term_data,
     ];
@@ -172,16 +159,19 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('user_pass'),
     ];
 
-    $form['riprap_config']['riprap_config_output'] = [
-      '#type' => 'details',
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
-      '#title' => t('Details'),
-      ];
-    $form['riprap_config']['riprap_config_output']['current setup'] = [
-      '#description' => t('Username and password ha\ve been obfuscated'),
-      '#markup' => $current_config,
-      '#title' => t('Current configuration'),
+    $current_config = $this->generateRiprapConfig($form_state->getValues());
+    if (!$current_config) {
+      $current_config = t("No saved configuration found.");
+    }
+    // $replacement_string = "drupal_media_auth: ['xxxxx', 'xxxxx']";
+    $replacement_string = "drupal_media_auth: ['" . $form_state->getValue('user_name') . "', '" . $form_state->getValue('user_pass') . "']";
+    $current_config = preg_replace('/drupal_media_auth.*\]/', $replacement_string, $current_config);
+    $form['riprap_config']['current_setup'] = [
+      '#type' => 'textarea',
+      '#rows' => 50,
+      '#title' => $this->t('Configuration file contents'),
+      '#default_value' => $current_config,
+      '#description' => $this->t('Copy and paste this into a Riprap configuration file.'),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -212,7 +202,6 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
-    $this->persistRiprapConfig($values);
     $this->configFactory->getEditable('islandora_riprap.settings')
       ->set('riprap_mode', $form_state->getValue('riprap_mode'))
       ->set('riprap_rest_endpoint', rtrim($form_state->getValue('riprap_rest_endpoint'), '/'))
@@ -238,11 +227,8 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
    * @param array $values
    *    The form values.
    */
-  public function persistRiprapConfig($values) {
+  public function generateRiprapConfig($values) {
     $base_url = \Drupal::request()->getSchemeAndHttpHost();
-    if (!file_exists($this->config_filepath)) {
-      mkdir($this->config_filepath, 0777, true);
-    }
     $riprap_config = <<<EOF
 ####################
 # General settings #
@@ -281,7 +267,7 @@ plugins.postcheck: ['PluginPostCheckCopyFailures']
 # Absolute or relative to the Riprap application directory.
 failures_log_path: '/tmp/riprap_failed_events.log'
 EOF;
-  $success = file_save_data($riprap_config, "$this->config_filepath/islandora_riprap_config.yml", FILE_EXISTS_REPLACE);
+    return $riprap_config;
   }
 }
 
