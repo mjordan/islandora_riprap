@@ -117,12 +117,12 @@ function islandora_riprap_cron() {
  */
 function islandora_riprap_islandora_premis_turtle_alter($nid, &$turtle) {
   $config = \Drupal::config('islandora_riprap.settings');
-  $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
   $utils = \Drupal::service('islandora.utils');
   $riprap = \Drupal::service('islandora_riprap.riprap');
   $islandora_riprap_utils = \Drupal::service('islandora_riprap.utils');
   $media_source = \Drupal::service('islandora.media_source_service');
 
+  $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
   $media = $utils->getMedia($node);
 
   if (count($media) > 0) {
@@ -135,21 +135,9 @@ function islandora_riprap_islandora_premis_turtle_alter($nid, &$turtle) {
         $binary_resource_url = $islandora_riprap_utils->getFedoraUrl($file->uuid());
       }
 
-      // Register some namespaces.
-      $ns = new EasyRdf_Namespace();
-      $ns->set('premisObject', 'http://www.loc.gov/premis/rdf/v3/Object');
-      $ns->set('premis', 'http://id.loc.gov/vocabulary/preservation/eventOutcome');
-      $ns->set('crypHashFunc', 'http://id.loc.gov/vocabulary/preservation/cryptographicHashFunctions/');
-      $ns->set('ebucore', 'https://www.ebu.ch/metadata/ontologies/ebucore#');
-
       // Create the graph from existing Turtle.
       $graph = new EasyRdf_Graph();
       $graph->parse($turtle);
-
-      $graph->resource($binary_resource_url, 'premisObject:File');
-      $graph->add($binary_resource_url, 'premis:size', $file->getSize());
-      $graph->add($binary_resource_url, 'premis:compositionLevel', 0);
-      $graph->add($binary_resource_url, 'ebucore:hasMimeType', $file->getMimeType());
 
       // Get fixity events and express them as PREMIS RDF.
       $riprap_events = $riprap->getEvents(array('output_format' => 'json', 'resource_id' => $binary_resource_url));

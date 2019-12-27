@@ -154,7 +154,6 @@ class IslandoraRiprapUtils {
     $event_data_array = json_decode($event_data, true);
     $months = array();
     foreach ($event_data_array as $event) {
-    \Drupal::logger('islandora_riprap')->debug($event['timestamp']);
       $month = preg_replace('/\-\d\dT.+$/', '', $event['timestamp']);
       if (in_array($month, array_keys($months))) {
         $months[$month]++;
