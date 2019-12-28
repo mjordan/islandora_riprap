@@ -75,12 +75,13 @@ function islandora_riprap_page_attachments(array &$attachments) {
       'labels' => array_keys($riprap_data),
       'datasets' => array($dataset),
     );
-    $attachments['#attached']['drupalSettings']['islandora_riprap']['chart_data'] = $line_chart_data;
+
     if ($total_failed_events == 0) {
-      \Drupal::messenger()->addMessage(t('No failed fixity events found.'), 'status');
+      $attachments['#attached']['drupalSettings']['islandora_riprap']['chart_data'] = NULL;
       \Drupal::logger('islandora_riprap')->info(t('Failed fixity check report has found no events.'));
     }
     else {
+      $attachments['#attached']['drupalSettings']['islandora_riprap']['chart_data'] = $line_chart_data;
       \Drupal::messenger()->addMessage(t('Failed fixity check events found. See monthly summary below.'), 'warning');
       \Drupal::logger('islandora_riprap')->warning(t('Failed fixity check report has found @total events.', ['@total' => $total_failed_events]));
     }

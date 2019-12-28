@@ -24,7 +24,7 @@ class IslandoraRiprapChartController extends ControllerBase {
      return [
       '#type' => 'markup',
       '#markup' => $output,
-      '#allowed_tags' => array_merge(Xss::getHtmlTagList(), ['canvas'])
+      '#allowed_tags' => array_merge(Xss::getHtmlTagList(), ['canvas', 'p', 'div'])
      ];
    }
 }

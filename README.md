@@ -67,7 +67,7 @@ There is no separate configuration for this report. It can be accessed either fr
 
 ![no failed fixity events](docs/fixity_events_report_no_failures.png)
 
-If failed events exist, the report will contain the number of events per month:
+If failed events exist, the report will inidcate the number of events per month:
 
 ![failed fixity events](docs/fixity_events_report_failures.png)
 

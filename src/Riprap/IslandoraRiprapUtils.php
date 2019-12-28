@@ -140,7 +140,9 @@ class IslandoraRiprapUtils {
    *   The markup.
    */
   public function getFixityEventsReportMarkup() {
-    return '<div id="islandora-riprap-fail-events-content"><canvas id="islandora-riprap-fail-events-chart"></canvas></div>';
+    $markup = '<div id="islandora-riprap-fail-events-content"><canvas id="islandora-riprap-fail-events-chart"></canvas></div>';
+    $markup .= '<p id="islandora-riprap-fail-events-no-events"></p>';
+    return $markup;
   }
 
   /**
