@@ -10,7 +10,7 @@ Javascript that renders a Chart.js line chart.
   var IslandoraRiprapLineChartData = drupalSettings.islandora_riprap.chart_data;
 
   var IslandoraRiprapLineChart = new Chart(IslandoraRiprapLineChartCanvas, {
-    type: 'line',
+    type: 'scatter',
     data: IslandoraRiprapLineChartData,
     options: {
         scales: {

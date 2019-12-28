@@ -124,6 +124,12 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Log warnings about missing resources and fixity events.'),
       '#default_value' => $config->get('log_riprap_warnings'),
     ];
+    $form['use_sample_failed_fixity_events'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Use sample fixity event data.'),
+      '#description' => $this->t('Check this box to use randomly generated failed fixity event data in the "Failed Fixity Check Events" chart. Useful for demos, etc.'),
+      '#default_value' => $config->get('use_sample_failed_fixity_events'),
+    ];
 
     $form['riprap_config'] = [
       '#type' => 'details',
@@ -212,6 +218,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       ->set('gemini_rest_endpoint', rtrim($form_state->getValue('gemini_rest_endpoint'), '/'))
       ->set('use_drupal_urls', $form_state->getValue('use_drupal_urls'))
       ->set('log_riprap_warnings', $form_state->getValue('log_riprap_warnings'))
+      ->set('use_sample_failed_fixity_events', $form_state->getValue('use_sample_failed_fixity_events'))
       ->set('fixity_terms', $form_state->getValue('fixity_terms'))
       ->set('fixity_content_type', $form_state->getValue('fixity_content_type'))
       ->set('user_name', $form_state->getValue('user_name'))

@@ -125,7 +125,7 @@ class IslandoraRiprapUtils {
    *   String version of \Drupal\Core\Url Link object.
    */
   public function getLinkToFailedFixityEventsReport() {
-    $chart_link = \Drupal\Core\Link::createFromRoute('Failed fixity events report',
+    $chart_link = \Drupal\Core\Link::createFromRoute('Failed fixity check events report',
       'islandora_riprap.chart',
       [],
       ['attributes' => ['target' => '_blank', 'title' => t('This report will open in a new tab')]]
@@ -162,6 +162,32 @@ class IslandoraRiprapUtils {
         $months[$month] = 0;
       }
     }
+    return $months;
+  }
+
+  /**
+   * Generates sample failed fixity events data.
+   *
+   * @return array
+   *   Array of yyyy-mm month keys with number of failed events as values.
+   */
+  public function getSampleFailedFixityEventsReportData() {
+    $current_year = date('Y');
+    // 3 year's worth of data.
+    $years = range($current_year, $current_year - 2);
+    $months = array();
+    foreach ($years as $year) {
+      for ($m = 1; $m <= 12; $m++) {
+        $date = $year . '-' . str_pad($m, 2, '0', STR_PAD_LEFT);
+        $months[$date] = 0;
+      }
+    }
+
+    $months_with_failures = array_rand($months, 6);
+    foreach ($months_with_failures as $month) {
+      $months[$month] = rand(1, 10);
+    }
+
     return $months;
   }
 }

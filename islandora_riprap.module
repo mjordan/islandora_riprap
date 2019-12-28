@@ -36,6 +36,7 @@ function template_preprocess_islandora_riprap_summary(&$variables) {
 * Implements hook_page_attachments().
 */
 function islandora_riprap_page_attachments(array &$attachments) {
+  $config = \Drupal::config('islandora_riprap.settings');
   $current_path = \Drupal::service('path.current')->getPath();
 
   $path_args = explode('/', ltrim($current_path, '/'));
@@ -48,7 +49,12 @@ function islandora_riprap_page_attachments(array &$attachments) {
     $attachments['#attached']['library'][] = 'islandora_riprap/islandora_riprap_chart';
 
     $utils = \Drupal::service('islandora_riprap.utils');
-    $riprap_data = $utils->getFailedFixityEventsReportData();
+    if ($config->get('use_sample_failed_fixity_events')) {
+      $riprap_data = $utils->getSampleFailedFixityEventsReportData();
+    }
+    else {
+      $riprap_data = $utils->getFailedFixityEventsReportData();
+    }
     $dataset = new StdClass();
     $dataset->data = array_values($riprap_data);
     $total_failed_events = array_sum($dataset->data);
@@ -62,7 +68,7 @@ function islandora_riprap_page_attachments(array &$attachments) {
     }
     $dataset->pointBackgroundColor = 'red';
     $dataset->borderWidth = 1;
-    $dataset->pointRadius = 1;
+    $dataset->pointRadius = 5;
     $dataset->fill = FALSE;
     $dataset->lineTension = 0;
     $line_chart_data = array(
