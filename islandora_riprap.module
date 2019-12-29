@@ -8,18 +8,12 @@ function islandora_riprap_theme($existing, $type, $theme, $path) {
     'islandora_riprap_summary' => [
       'variables' => ['content' => null, 'outcome' => null, 'mid' => null],
     ],
-    'islandora_riprap_report' => [
+    'islandora_riprap_media_events' => [
       'variables' => ['report' => null, 'mid' => null, 'binary_resource_url' => null],
     ],
-  ];
-}
-
-/**
-* Default preprocessor function for the islandora_riprap_theme hook.
-*/
-function template_preprocess_islandora_riprap_report(&$variables) {
-  $variables['attributes'] = [
-    'id' => ['islandora_riprap_report'],
+    'islandora_riprap_events_report' => [
+      'variables' => [],
+    ],
   ];
 }
 
@@ -29,6 +23,24 @@ function template_preprocess_islandora_riprap_report(&$variables) {
 function template_preprocess_islandora_riprap_summary(&$variables) {
   $variables['attributes'] = [
     'class' => [$variables['outcome']],
+  ];
+}
+
+/**
+* Default preprocessor function for the islandora_riprap_theme hook.
+*/
+function template_preprocess_islandora_riprap_media_events(&$variables) {
+  $variables['attributes'] = [
+    'id' => ['islandora_riprap_media_events'],
+  ];
+}
+
+/**
+* Default preprocessor function for the islandora_riprap_theme hook.
+*/
+function template_preprocess_islandora_riprap_events_report(&$variables) {
+  $variables['attributes'] = [
+    'id' => ['islandora_riprap_events_report'],
   ];
 }
 

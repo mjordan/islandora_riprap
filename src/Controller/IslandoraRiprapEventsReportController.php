@@ -8,7 +8,7 @@ use Drupal\Component\Utility\Xss;
 /**
 * Controller.
 */
-class IslandoraRiprapChartController extends ControllerBase {
+class IslandoraRiprapEventsReportController extends ControllerBase {
   public function __construct() {
     $config = \Drupal::config('islandora_riprap.settings');
   }
@@ -20,12 +20,10 @@ class IslandoraRiprapChartController extends ControllerBase {
    */
    public function main() {
      $utils = \Drupal::service('islandora_riprap.utils');
-     $output = $utils->getFixityEventsReportMarkup();
      return [
-      '#type' => 'markup',
-      '#markup' => $output,
-      '#allowed_tags' => array_merge(Xss::getHtmlTagList(), ['canvas', 'p', 'div'])
+       '#theme' => 'islandora_riprap_events_report',
      ];
+
    }
 }
 

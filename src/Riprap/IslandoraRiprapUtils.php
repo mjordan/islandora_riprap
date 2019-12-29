@@ -126,23 +126,11 @@ class IslandoraRiprapUtils {
    */
   public function getLinkToFailedFixityEventsReport() {
     $chart_link = \Drupal\Core\Link::createFromRoute('Failed fixity check events report',
-      'islandora_riprap.chart',
+      'islandora_riprap.events_report',
       [],
       ['attributes' => ['target' => '_blank', 'title' => t('This report will open in a new tab')]]
     );
     return $chart_link->toString();
-  }
-
-  /**
-   * Generates markup used by Chart.js.
-   *
-   * @return string
-   *   The markup.
-   */
-  public function getFixityEventsReportMarkup() {
-    $markup = '<div id="islandora-riprap-fail-events-content"><canvas id="islandora-riprap-fail-events-chart"></canvas></div>';
-    $markup .= '<p id="islandora-riprap-fail-events-no-events">Excellent!</p>';
-    return $markup;
   }
 
   /**

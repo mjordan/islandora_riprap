@@ -7,7 +7,7 @@ use Drupal\Core\Controller\ControllerBase;
 /**
 * Controller.
 */
-class IslandoraRiprapController extends ControllerBase {
+class IslandoraRiprapMediaEventsController extends ControllerBase {
   public function __construct() {
     $config = \Drupal::config('islandora_riprap.settings');
     $this->riprap_endpoint = $config->get('riprap_rest_endpoint') ?: 'http://localhost:8000/api/fixity';
@@ -67,7 +67,7 @@ class IslandoraRiprapController extends ControllerBase {
      ];
 
      return [
-       '#theme' => 'islandora_riprap_report',
+       '#theme' => 'islandora_riprap_media_events',
        '#report' => $output,
        '#mid' => $mid,
        '#binary_resource_url' => $binary_resource_url,
