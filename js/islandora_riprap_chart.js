@@ -11,7 +11,7 @@ Javascript that renders a Chart.js line chart.
 
   if (IslandoraRiprapLineChartData == null) {
     // Print a happy message.
-    var message = 'No failed fixity check events found. Yay!';
+    var message = 'Excellent!';
     $('#islandora-riprap-fail-events-no-events').text(message).css({"font-size":"x-large","margin-top":"-5em"});
   } else {
     var IslandoraRiprapLineChart = new Chart(IslandoraRiprapLineChartCanvas, {

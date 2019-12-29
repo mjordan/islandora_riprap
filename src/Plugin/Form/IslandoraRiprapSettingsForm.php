@@ -127,7 +127,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
     $form['use_sample_failed_fixity_events'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Use sample fixity event data.'),
-      '#description' => $this->t('Check this box to use randomly generated failed fixity event data in the "Failed Fixity Check Events" chart. Useful for demos, etc.'),
+      '#description' => $this->t('In the "Failed Fixity Check Events" report, use auto-generated sample data instead of data from Riprap. Useful for demos, etc.'),
       '#default_value' => $config->get('use_sample_failed_fixity_events'),
     ];
 
