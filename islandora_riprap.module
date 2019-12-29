@@ -52,7 +52,7 @@ function islandora_riprap_page_attachments(array &$attachments) {
       $dataset = new StdClass();
       $dataset->data = array_values($riprap_data);
       $total_failed_events = array_sum($dataset->data);
-      $dataset->label = t("$total_failed_events failed fixity check events, broken down by month");
+      $dataset->label = t("$total_failed_events (sample) failed fixity check events, broken down by month");
       $dataset->borderColor = 'red';
       $dataset->pointBackgroundColor = 'red';
       $dataset->borderWidth = 1;
@@ -65,6 +65,7 @@ function islandora_riprap_page_attachments(array &$attachments) {
       );
       $attachments['#attached']['library'][] = 'islandora_riprap/islandora_riprap_chart';
       $attachments['#attached']['drupalSettings']['islandora_riprap']['chart_data'] = $line_chart_data;
+      \Drupal::messenger()->addMessage(t('(Sample) failed fixity check events found. See monthly summary below.'), 'warning');
       return;
     }
     else {
