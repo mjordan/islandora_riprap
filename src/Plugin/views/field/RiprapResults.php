@@ -13,6 +13,7 @@ use Drupal\views\ResultRow;
  * @ViewsField("riprap_results")
  */
 class RiprapResults extends FieldPluginBase {
+
   /**
    * @{inheritdoc}
    */
@@ -33,7 +34,7 @@ class RiprapResults extends FieldPluginBase {
     $media = $value->_entity;
     $mid = $media->id();
     $binary_resource_uuid = $utils->getFileUuid($mid);
-    
+
     if ($this->use_drupal_urls) {
       $binary_resource_url = $utils->getLocalUrl($mid);
     }
@@ -42,8 +43,13 @@ class RiprapResults extends FieldPluginBase {
     }
 
     $num_events = $config->get('number_of_events') ?: 10;
-    $riprap_output = $riprap->getEvents(array('limit' => $num_events, 'sort' => 'desc', 'output_format' => 'json', 'resource_id' => $binary_resource_url));
-    $events = (json_decode($riprap_output, true));
+    $riprap_output = $riprap->getEvents(array(
+      'limit' => $num_events,
+      'sort' => 'desc',
+      'output_format' => 'json',
+      'resource_id' => $binary_resource_url,
+    ));
+    $events = (json_decode($riprap_output, TRUE));
 
     // Look for events with an 'event_outcome' of 'fail'.
     $failed_events = 0;
@@ -71,12 +77,13 @@ class RiprapResults extends FieldPluginBase {
 
     if (count($events) == 0) {
       $outcome = 'noevents';
-      // Show mid and indicate that file is not in Riprap (e.g., 'No Riprap events for $mid').
+      // Show mid and indicate that file is not in
+      // Riprap (e.g., 'No Riprap events for $mid').
       $binary_resource_url = 'No Riprap events for ' . $binary_resource_url;
     }
 
-    // Not a Riprap event, but output that indicates Riprap is not available at its
-    // configured endpoint URL.
+    // Not a Riprap event, but output that indicates Riprap
+    // is not available at its configured endpoint URL.
     if (array_key_exists('riprap_status', $events) && $events['riprap_status'] == 404) {
       $binary_resource_url = $events['message'];
       $mid = NULL;

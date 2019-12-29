@@ -1,15 +1,24 @@
 <?php
 
 /**
-* Implements hook_theme().
-*/
+ * Implements hook_theme().
+ */
 function islandora_riprap_theme($existing, $type, $theme, $path) {
- return [
+  return [
     'islandora_riprap_summary' => [
-      'variables' => ['content' => null, 'outcome' => null, 'mid' => null],
+      'variables' => ['content' => NULL, 'outcome' => NULL, 'mid' => NULL],
     ],
     'islandora_riprap_media_events' => [
-      'variables' => ['report' => null, 'mid' => null, 'binary_resource_url' => null],
+      'variables' => [
+        'report' => NULL,
+        'mid' => NULL,
+        'binary_resource_url' => NULL,
+      ],
+      'variables' => [
+        'report' => NULL,
+        'mid' => NULL,
+        'binary_resource_url' => NULL,
+      ],
     ],
     'islandora_riprap_events_report' => [
       'variables' => [],
@@ -18,8 +27,8 @@ function islandora_riprap_theme($existing, $type, $theme, $path) {
 }
 
 /**
-* Default preprocessor function for the islandora_riprap_theme hook.
-*/
+ * Default preprocessor function for the islandora_riprap_theme hook.
+ */
 function template_preprocess_islandora_riprap_summary(&$variables) {
   $variables['attributes'] = [
     'class' => [$variables['outcome']],
@@ -27,8 +36,8 @@ function template_preprocess_islandora_riprap_summary(&$variables) {
 }
 
 /**
-* Default preprocessor function for the islandora_riprap_theme hook.
-*/
+ * Default preprocessor function for the islandora_riprap_theme hook.
+ */
 function template_preprocess_islandora_riprap_media_events(&$variables) {
   $variables['attributes'] = [
     'id' => ['islandora_riprap_media_events'],
@@ -36,8 +45,8 @@ function template_preprocess_islandora_riprap_media_events(&$variables) {
 }
 
 /**
-* Default preprocessor function for the islandora_riprap_theme hook.
-*/
+ * Default preprocessor function for the islandora_riprap_theme hook.
+ */
 function template_preprocess_islandora_riprap_events_report(&$variables) {
   $variables['attributes'] = [
     'id' => ['islandora_riprap_events_report'],
@@ -45,8 +54,8 @@ function template_preprocess_islandora_riprap_events_report(&$variables) {
 }
 
 /**
-* Implements hook_page_attachments().
-*/
+ * Implements hook_page_attachments().
+ */
 function islandora_riprap_page_attachments(array &$attachments) {
   $config = \Drupal::config('islandora_riprap.settings');
   $current_path = \Drupal::service('path.current')->getPath();
@@ -71,10 +80,7 @@ function islandora_riprap_page_attachments(array &$attachments) {
       $dataset->pointRadius = 5;
       $dataset->fill = FALSE;
       $dataset->lineTension = 0;
-      $line_chart_data = array(
-        'labels' => array_keys($riprap_data),
-        'datasets' => array($dataset),
-      );
+      $line_chart_data = ['labels' => array_keys($riprap_data), 'datasets' => array($dataset)];
       $attachments['#attached']['library'][] = 'islandora_riprap/islandora_riprap_chart';
       $attachments['#attached']['drupalSettings']['islandora_riprap']['chart_data'] = $line_chart_data;
       \Drupal::messenger()->addMessage(t('(Sample) failed fixity check events found. See monthly summary below.'), 'warning');
@@ -94,7 +100,6 @@ function islandora_riprap_page_attachments(array &$attachments) {
       $attachments['#attached']['library'][] = 'islandora_riprap/islandora_riprap_chart';
       $dataset = new StdClass();
       $dataset->data = array_values($riprap_data);
-      // $total_failed_events = array_sum($dataset->data);
       $dataset->label = t("$total_failed_events failed fixity check events, broken down by month");
       $dataset->borderColor = 'red';
       $dataset->pointBackgroundColor = 'red';
@@ -186,7 +191,6 @@ function islandora_riprap_islandora_premis_turtle_alter($nid, &$turtle) {
       }
       $turtle = $graph->serialise('turtle');
     }
-  }  
+  }
 
 }
-

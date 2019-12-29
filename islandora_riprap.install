@@ -10,15 +10,17 @@ function islandora_riprap_requirements($phase) {
   if ($phase == 'runtime') {
     $config = \Drupal::config('islandora_riprap.settings');
     $mode = $config->get('riprap_mode');
-	  
-    // If using Riprap as a remote microserive, Check whether Riprap's endpoint is available.
+
+    // If using Riprap as a remote microserive,
+    // check whether Riprap's endpoint is available.
     if ($mode == 'remote') {
       $riprap_endpoint = $config->get('riprap_rest_endpoint');
 
       $riprap_response_code = 0;
       try {
         $client = \Drupal::httpClient();
-        // Assumes Riprap requires no authentication (e.g., it's behind the Symfony or other firewall).
+        // Assumes Riprap requires no authentication
+        // (e.g., it's behind the Symfony or other firewall).
         $response = $client->request('HEAD', $riprap_endpoint);
         $riprap_response_code = $response->getStatusCode();
       }
@@ -29,7 +31,6 @@ function islandora_riprap_requirements($phase) {
         if ($riprap_response_code == 200) {
           $requirements['islandora_riprap_microservice_available'] = [
             'title' => t("Islandora Riprap"),
-            // 'description' => t("Riprap is running at @endpoint. @chart_link.", array('@endpoint' => $riprap_endpoint, '@chart_link' => $chart_link->toString())),
             'description' => t("Riprap is running at @endpoint. @chart_link.", array('@endpoint' => $riprap_endpoint, '@chart_link' => $utils->getLinkToFailedFixityEventsReport())),
             'severity' => REQUIREMENT_INFO,
           ];
@@ -47,12 +48,11 @@ function islandora_riprap_requirements($phase) {
     if ($mode == 'local') {
       $riprap_directory = $config->get('riprap_local_directory');
       if (file_exists($riprap_directory)) {
-          $requirements['riprap_directory_exists'] = [
-            'title' => t("Islandora Riprap"),
-            // 'description' => t("Riprap is installed at @directory. @chart_link.", array('@directory' => $riprap_directory, '@chart_link' => $chart_link->toString())),
-            'description' => t("Riprap is installed at @directory. @chart_link.", array('@directory' => $riprap_directory, '@chart_link' => $utils->getLinkToFailedFixityEventsReport())),
-            'severity' => REQUIREMENT_INFO,
-          ];
+        $requirements['riprap_directory_exists'] = [
+          'title' => t("Islandora Riprap"),
+          'description' => t("Riprap is installed at @directory. @chart_link.", array('@directory' => $riprap_directory, '@chart_link' => $utils->getLinkToFailedFixityEventsReport())),
+          'severity' => REQUIREMENT_INFO,
+        ];
       }
       else {
         $requirements['riprap_directory_exists'] = [
@@ -66,4 +66,3 @@ function islandora_riprap_requirements($phase) {
 
   return $requirements;
 }
-

@@ -137,7 +137,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       '#collapsed' => TRUE,
       '#title' => t('Generate Riprap configuration settings (optional)'),
       '#description' => t('This section of the form allows you to generate a configuration file for Riprap. After you save this form, the content in the "Configuration file contents" section below can be copied into a YAML file to use as your Riprap microservice configuration.'),
-      ];
+    ];
     $form['riprap_config']['fixity_content_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Content type to be examined'),
@@ -183,7 +183,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
     return parent::buildForm($form, $form_state);
   }
 
-    /**
+  /**
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
@@ -232,9 +232,9 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
    * Saves a Riprap configuration YAML file.
    *
    * @param array $values
-   *    The form values.
+   *   The form values.
    */
-  public function generateRiprapConfig($values) {
+  public function generateRiprapConfig(array $values) {
     $base_url = \Drupal::request()->getSchemeAndHttpHost();
     $riprap_config = <<<EOF
 ####################
@@ -276,5 +276,5 @@ failures_log_path: '/tmp/riprap_failed_events.log'
 EOF;
     return $riprap_config;
   }
-}
 
+}

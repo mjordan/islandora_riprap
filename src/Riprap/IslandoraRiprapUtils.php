@@ -5,7 +5,7 @@ namespace Drupal\islandora_riprap\Riprap;
 use Drupal\media\Entity\Media;
 
 /**
- * Islandora-specific utilities for interacting with a Riprap fixity microservice.
+ * Islandora-specific utilities for interacting with Riprap.
  */
 class IslandoraRiprapUtils {
 
@@ -31,8 +31,8 @@ class IslandoraRiprapUtils {
       'field_media_audio_file',
       'field_media_video_file',
     );
-   
-    $media = Media::load($mid); 
+
+    $media = Media::load($mid);
     // Loop through each of the media fields and get the UUID of the File
     // in the first one encountered. Assumes each Media entity has only
     // one of the media file fields.
@@ -55,7 +55,7 @@ class IslandoraRiprapUtils {
    *
    * @return string
    *    The Fedora URL corresponding to the UUID, or a message.
-  */
+   */
   public function getFedoraUrl($uuid) {
     try {
       $container = \Drupal::getContainer();
@@ -63,7 +63,7 @@ class IslandoraRiprapUtils {
       $auth = 'Bearer ' . $jwt->generateToken();
       $client = \Drupal::httpClient();
       $options = [
-        'http_errors' => false,
+        'http_errors' => FALSE,
         'headers' => ['Authorization' => $auth],
       ];
       $url = $this->gemini_endpoint . '/' . $uuid;
@@ -71,7 +71,7 @@ class IslandoraRiprapUtils {
       $code = $response->getStatusCode();
       if ($code == 200) {
         $body = $response->getBody()->getContents();
-        $body_array = json_decode($body, true);
+        $body_array = json_decode($body, TRUE);
         return $body_array['fedora'];
       }
       elseif ($code == 404) {
@@ -83,8 +83,8 @@ class IslandoraRiprapUtils {
       }
     }
     catch (RequestException $e) {
-       \Drupal::logger('islandora_riprap')->error($e->getMessage());
-       return "Sorry, there has been an error, please refer to the system log";
+      \Drupal::logger('islandora_riprap')->error($e->getMessage());
+      return "Sorry, there has been an error, please refer to the system log";
     }
   }
 
@@ -97,7 +97,8 @@ class IslandoraRiprapUtils {
    *   A Media ID.
    *
    * @return string
-   *   The local Drupal URL of the file associated with the incoming Media entity.
+   *   The local Drupal URL of the file associated with the
+   *   incoming Media entity.
    */
   public function getLocalUrl($mid) {
     $media_fields = array(
@@ -141,7 +142,7 @@ class IslandoraRiprapUtils {
    */
   public function getFailedFixityEventsReportData() {
     $event_data = $this->riprap->getEvents(array('output_format' => 'json', 'outcome' => 'fail'));
-    $event_data_array = json_decode($event_data, true);
+    $event_data_array = json_decode($event_data, TRUE);
     $months = array();
     foreach ($event_data_array as $event) {
       $month = preg_replace('/\-\d\dT.+$/', '', $event['timestamp']);
@@ -180,4 +181,5 @@ class IslandoraRiprapUtils {
 
     return $months;
   }
+
 }

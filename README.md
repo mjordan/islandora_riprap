@@ -2,7 +2,7 @@
 
 ## Introduction
 
-A Drupal 8 module to provide node-level and repository-level reports using data from the [Riprap](https://github.com/mjordan/riprap) fixity microservice.
+A Drupal 8 module to provide node-level and repository-level reports using data from a [Riprap](https://github.com/mjordan/riprap) fixity microservice.
 
 ## Overview
 
@@ -63,7 +63,7 @@ If Riprap is not found or is not running at its configured endpoint URL, each ce
 
 ### The Failed Fixity Check Events report
 
-There is no separate configuration for this report. It can be accessed either from with the "Fixity Auditing" admin settings form at `admin/config/islandora_riprap/settings`, or from the "Islandora Riprap" row in Drupal's "Status report" list. If Riprap contains no failed fixity check events, you'll see something like:
+There is no separate configuration for this report. It can be accessed either from with the "Fixity Auditing" admin settings form at `admin/config/islandora_riprap/settings`, or from the "Islandora Riprap" row in Drupal's "Status report" list. If Riprap contains no failed fixity check events, you'll see the following:
 
 ![no failed fixity events](docs/fixity_events_report_no_failures.png)
 
