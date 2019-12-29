@@ -85,7 +85,7 @@ class Riprap {
       } 
 
       // Bug: limit is not being applied.
-      error_log($riprap_cmd, 3, '/tmp/mjlog.txt');
+      // error_log($riprap_cmd, 3, '/tmp/mjlog.txt');
 
       $process = new Process($riprap_cmd);
       $process->setWorkingDirectory($this->riprap_local_directory);

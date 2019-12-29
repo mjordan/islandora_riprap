@@ -42,46 +42,57 @@ function islandora_riprap_page_attachments(array &$attachments) {
   $path_args = explode('/', ltrim($current_path, '/'));
   // E.g., the Manage Media View for each Islandora object.
   if (count($path_args) >= 3 && $path_args[0] == 'node' && $path_args[2] == 'media') {
-    $attachments['#attached']['library'][] = 'islandora_riprap/islandora_riprap';
+    $attachments['#attached']['library'][] = 'islandora_riprap/islandora_riprap_media';
   }
 
   if ($current_path == '/admin/reports/islandora_riprap') {
-    $attachments['#attached']['library'][] = 'islandora_riprap/islandora_riprap_chart';
-
     $utils = \Drupal::service('islandora_riprap.utils');
     if ($config->get('use_sample_failed_fixity_events')) {
       $riprap_data = $utils->getSampleFailedFixityEventsReportData();
+      $dataset = new StdClass();
+      $dataset->data = array_values($riprap_data);
+      $total_failed_events = array_sum($dataset->data);
+      $dataset->label = t("$total_failed_events failed fixity check events, broken down by month");
+      $dataset->borderColor = 'red';
+      $dataset->pointBackgroundColor = 'red';
+      $dataset->borderWidth = 1;
+      $dataset->pointRadius = 5;
+      $dataset->fill = FALSE;
+      $dataset->lineTension = 0;
+      $line_chart_data = array(
+        'labels' => array_keys($riprap_data),
+        'datasets' => array($dataset),
+      );
+      $attachments['#attached']['library'][] = 'islandora_riprap/islandora_riprap_chart';
+      $attachments['#attached']['drupalSettings']['islandora_riprap']['chart_data'] = $line_chart_data;
+      return;
     }
     else {
       $riprap_data = $utils->getFailedFixityEventsReportData();
+      $total_failed_events = array_sum(array_values($riprap_data));
     }
-    $dataset = new StdClass();
-    $dataset->data = array_values($riprap_data);
-    $total_failed_events = array_sum($dataset->data);
-    if ($total_failed_events == 0) {
-      $dataset->label = t("No failed fixity check events. Perfect!");
-      $dataset->borderColor = 'green';
-    }
-    else {
-      $dataset->label = t("$total_failed_events failed fixity check events, broken down by month");
-      $dataset->borderColor = 'red';
-    }
-    $dataset->pointBackgroundColor = 'red';
-    $dataset->borderWidth = 1;
-    $dataset->pointRadius = 5;
-    $dataset->fill = FALSE;
-    $dataset->lineTension = 0;
-    $line_chart_data = array(
-      'labels' => array_keys($riprap_data),
-      'datasets' => array($dataset),
-    );
 
     if ($total_failed_events == 0) {
-      $attachments['#attached']['drupalSettings']['islandora_riprap']['chart_data'] = NULL;
+      $attachments['#attached']['library'][] = 'islandora_riprap/islandora_riprap_no_failed_fixity_events';
       \Drupal::logger('islandora_riprap')->info(t('Failed fixity check report has found no events.'));
       \Drupal::messenger()->addMessage(t('No failed fixity events found.'), 'status');
     }
     else {
+      $attachments['#attached']['library'][] = 'islandora_riprap/islandora_riprap_chart';
+      $dataset = new StdClass();
+      $dataset->data = array_values($riprap_data);
+      // $total_failed_events = array_sum($dataset->data);
+      $dataset->label = t("$total_failed_events failed fixity check events, broken down by month");
+      $dataset->borderColor = 'red';
+      $dataset->pointBackgroundColor = 'red';
+      $dataset->borderWidth = 1;
+      $dataset->pointRadius = 5;
+      $dataset->fill = FALSE;
+      $dataset->lineTension = 0;
+      $line_chart_data = array(
+        'labels' => array_keys($riprap_data),
+        'datasets' => array($dataset),
+      );
       $attachments['#attached']['drupalSettings']['islandora_riprap']['chart_data'] = $line_chart_data;
       \Drupal::messenger()->addMessage(t('Failed fixity check events found. See monthly summary below.'), 'warning');
       \Drupal::logger('islandora_riprap')->warning(t('Failed fixity check report has found @total events.', ['@total' => $total_failed_events]));
