@@ -9,6 +9,9 @@ use Symfony\Component\Process\Process;
  */
 class Riprap {
 
+  /**
+   * Constructor.
+   */
   public function __construct() {
     $config = \Drupal::config('islandora_riprap.settings');
     $this->riprap_mode = $config->get('riprap_mode') ?: 'remote';
@@ -51,17 +54,17 @@ class Riprap {
         return $body;
       }
       elseif ($code == 404) {
-        \Drupal::logger('islandora_riprap')->error('Riprap service not running or found at @endpoint', array('@endpoint' => $this->riprap_endpoint));
+        \Drupal::logger('islandora_riprap')->error('Riprap service not running or found at @endpoint', ['@endpoint' => $this->riprap_endpoint]);
         // This is a special 'response' indicating that Riprap
         // was not found (or is not running) at its configured URL.
-        $status_message = t("Riprap not found or is not running at @endpoint", array('@endpoint' => $this->riprap_endpoint));
-        return json_encode(array('riprap_status' => 404, 'message' => $status_message));
+        $status_message = t("Riprap not found or is not running at @endpoint", ['@endpoint' => $this->riprap_endpoint]);
+        return json_encode(['riprap_status' => 404, 'message' => $status_message]);
       }
       else {
         \Drupal::messenger()->addMessage($this->t('Riprap does not have any fixity events for @resource_id.', ['@resource_id' => $resource_id]), 'warning');
         if ($this->show_warnings) {
           if ($resource_id !== 'Not in Fedora') {
-            \Drupal::logger('islandora_riprap')->error('HTTP response code returned by Riprap for request to @resource_id: @code', array('@code' => $code, '@resource_id' => $resource_id));
+            \Drupal::logger('islandora_riprap')->error('HTTP response code returned by Riprap for request to @resource_id: @code', ['@code' => $code, '@resource_id' => $resource_id]);
           }
         }
       }
@@ -86,8 +89,7 @@ class Riprap {
     foreach ($options as $option_name => $option_value) {
       $riprap_cmd[] = '--' . $option_name . '=' . $option_value;
     }
-    // Bug: limit is not being applied.
-    // error_log($riprap_cmd, 3, '/tmp/mjlog.txt');
+    // @todo: limit is not being applied.
     $process = new Process($riprap_cmd);
     $process->setWorkingDirectory($this->riprap_local_directory);
     $process->run();

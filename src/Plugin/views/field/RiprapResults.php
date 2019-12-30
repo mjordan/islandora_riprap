@@ -15,10 +15,12 @@ use Drupal\views\ResultRow;
 class RiprapResults extends FieldPluginBase {
 
   /**
+   * Leave empty to avoid a query on this field.
+   *
    * @{inheritdoc}
    */
   public function query() {
-    // Leave empty to avoid a query on this field.
+    // I am empty.
   }
 
   /**
@@ -43,12 +45,12 @@ class RiprapResults extends FieldPluginBase {
     }
 
     $num_events = $config->get('number_of_events') ?: 10;
-    $riprap_output = $riprap->getEvents(array(
+    $riprap_output = $riprap->getEvents([
       'limit' => $num_events,
       'sort' => 'desc',
       'output_format' => 'json',
       'resource_id' => $binary_resource_url,
-    ));
+    ]);
     $events = (json_decode($riprap_output, TRUE));
 
     // Look for events with an 'event_outcome' of 'fail'.

@@ -3,12 +3,16 @@
 namespace Drupal\islandora_riprap\Riprap;
 
 use Drupal\media\Entity\Media;
+use Drupal\Core\Link;
 
 /**
  * Islandora-specific utilities for interacting with Riprap.
  */
 class IslandoraRiprapUtils {
 
+  /**
+   * Constructor.
+   */
   public function __construct() {
     $config = \Drupal::config('islandora_riprap.settings');
     $this->gemini_endpoint = $config->get('gemini_rest_endpoint') ?: 'http://localhost:8000/gemini';
@@ -25,12 +29,12 @@ class IslandoraRiprapUtils {
    *   The UUID of the file associated with the incoming Media entity.
    */
   public function getFileUuid($mid) {
-    $media_fields = array(
+    $media_fields = [
       'field_media_file',
       'field_media_image',
       'field_media_audio_file',
       'field_media_video_file',
-    );
+    ];
 
     $media = Media::load($mid);
     // Loop through each of the media fields and get the UUID of the File
@@ -54,7 +58,7 @@ class IslandoraRiprapUtils {
    *   The File entity's UUID.
    *
    * @return string
-   *    The Fedora URL corresponding to the UUID, or a message.
+   *   The Fedora URL corresponding to the UUID, or a message.
    */
   public function getFedoraUrl($uuid) {
     try {
@@ -79,7 +83,7 @@ class IslandoraRiprapUtils {
         return 'Not in Fedora';
       }
       else {
-        \Drupal::logger('islandora_riprap')->error('HTTP response code: @code', array('@code' => $code));
+        \Drupal::logger('islandora_riprap')->error('HTTP response code: @code', ['@code' => $code]);
       }
     }
     catch (RequestException $e) {
@@ -101,13 +105,13 @@ class IslandoraRiprapUtils {
    *   incoming Media entity.
    */
   public function getLocalUrl($mid) {
-    $media_fields = array(
+    $media_fields = [
       'field_media_file',
       'field_media_image',
       'field_media_audio_file',
       'field_media_video_file',
-    );
-    $media = \Drupal\Media\Entity\Media::load($mid);
+    ];
+    $media = Media::load($mid);
     // Loop through each of the media fields and get the UUID of the File
     // in the first one encountered. Assumes each Media entity has only
     // one of the media file fields.
@@ -126,7 +130,7 @@ class IslandoraRiprapUtils {
    *   String version of \Drupal\Core\Url Link object.
    */
   public function getLinkToFailedFixityEventsReport() {
-    $chart_link = \Drupal\Core\Link::createFromRoute('Failed fixity check events report',
+    $chart_link = Link::createFromRoute('Failed fixity check events report',
       'islandora_riprap.events_report',
       [],
       ['attributes' => ['target' => '_blank', 'title' => t('This report will open in a new tab')]]
@@ -141,9 +145,9 @@ class IslandoraRiprapUtils {
    *   Array of yyyy-mm month keys with number of failed events as values.
    */
   public function getFailedFixityEventsReportData() {
-    $event_data = $this->riprap->getEvents(array('output_format' => 'json', 'outcome' => 'fail'));
+    $event_data = $this->riprap->getEvents(['output_format' => 'json', 'outcome' => 'fail']);
     $event_data_array = json_decode($event_data, TRUE);
-    $months = array();
+    $months = [];
     foreach ($event_data_array as $event) {
       $month = preg_replace('/\-\d\dT.+$/', '', $event['timestamp']);
       if (in_array($month, array_keys($months))) {
@@ -166,7 +170,7 @@ class IslandoraRiprapUtils {
     $current_year = date('Y');
     // 3 year's worth of data.
     $years = range($current_year, $current_year - 2);
-    $months = array();
+    $months = [];
     foreach ($years as $year) {
       for ($m = 1; $m <= 12; $m++) {
         $date = $year . '-' . str_pad($m, 2, '0', STR_PAD_LEFT);

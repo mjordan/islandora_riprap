@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Contains the islandora_riprap.module.
+ */
+
+/**
  * Implements hook_theme().
  */
 function islandora_riprap_theme($existing, $type, $theme, $path) {
@@ -73,14 +78,14 @@ function islandora_riprap_page_attachments(array &$attachments) {
       $dataset = new StdClass();
       $dataset->data = array_values($riprap_data);
       $total_failed_events = array_sum($dataset->data);
-      $dataset->label = t("$total_failed_events (sample) failed fixity check events, broken down by month");
+      $dataset->label = t("@total (sample) failed fixity check events, broken down by month", ['@total' => $total_failed_events]);
       $dataset->borderColor = 'red';
       $dataset->pointBackgroundColor = 'red';
       $dataset->borderWidth = 1;
       $dataset->pointRadius = 5;
       $dataset->fill = FALSE;
       $dataset->lineTension = 0;
-      $line_chart_data = ['labels' => array_keys($riprap_data), 'datasets' => array($dataset)];
+      $line_chart_data = ['labels' => array_keys($riprap_data), 'datasets' => [$dataset]];
       $attachments['#attached']['library'][] = 'islandora_riprap/islandora_riprap_chart';
       $attachments['#attached']['drupalSettings']['islandora_riprap']['chart_data'] = $line_chart_data;
       \Drupal::messenger()->addMessage(t('(Sample) failed fixity check events found. See monthly summary below.'), 'warning');
@@ -100,17 +105,17 @@ function islandora_riprap_page_attachments(array &$attachments) {
       $attachments['#attached']['library'][] = 'islandora_riprap/islandora_riprap_chart';
       $dataset = new StdClass();
       $dataset->data = array_values($riprap_data);
-      $dataset->label = t("$total_failed_events failed fixity check events, broken down by month");
+      $dataset->label = t("@total failed fixity check events, broken down by month", ['@total' => $total_failed_events]);
       $dataset->borderColor = 'red';
       $dataset->pointBackgroundColor = 'red';
       $dataset->borderWidth = 1;
       $dataset->pointRadius = 5;
       $dataset->fill = FALSE;
       $dataset->lineTension = 0;
-      $line_chart_data = array(
+      $line_chart_data = [
         'labels' => array_keys($riprap_data),
-        'datasets' => array($dataset),
-      );
+        'datasets' => [$dataset],
+      ];
       $attachments['#attached']['drupalSettings']['islandora_riprap']['chart_data'] = $line_chart_data;
       \Drupal::messenger()->addMessage(t('Failed fixity check events found. See monthly summary below.'), 'warning');
       \Drupal::logger('islandora_riprap')->warning(t('Failed fixity check report has found @total events.', ['@total' => $total_failed_events]));
@@ -145,8 +150,6 @@ function islandora_riprap_cron() {
 /**
  * Alter the serialized Turtle.
  *
- * @todo: convert Riprap events into Turtle using EasyRDF.
- *
  * @param string $nid
  *   The current node's ID.
  * @param string $turtle
@@ -177,7 +180,7 @@ function islandora_riprap_islandora_premis_turtle_alter($nid, &$turtle) {
       $graph->parse($turtle);
 
       // Get fixity events and express them as PREMIS RDF.
-      $riprap_events = $riprap->getEvents(array('output_format' => 'json', 'resource_id' => $binary_resource_url));
+      $riprap_events = $riprap->getEvents(['output_format' => 'json', 'resource_id' => $binary_resource_url]);
       $riprap_events = json_decode($riprap_events, TRUE);
       foreach ($riprap_events as $event) {
         $graph->add($binary_resource_url, 'premis:fixity', $event['event_uuid']);

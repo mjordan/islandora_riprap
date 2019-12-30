@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Contains the .install file for the islandora_riprap module.
+ */
+
+/**
  * Implements hook_requirements().
  */
 function islandora_riprap_requirements($phase) {
@@ -31,14 +36,14 @@ function islandora_riprap_requirements($phase) {
         if ($riprap_response_code == 200) {
           $requirements['islandora_riprap_microservice_available'] = [
             'title' => t("Islandora Riprap"),
-            'description' => t("Riprap is running at @endpoint. @chart_link.", array('@endpoint' => $riprap_endpoint, '@chart_link' => $utils->getLinkToFailedFixityEventsReport())),
+            'description' => t("Riprap is running at @endpoint. @chart_link.", ['@endpoint' => $riprap_endpoint, '@chart_link' => $utils->getLinkToFailedFixityEventsReport()]),
             'severity' => REQUIREMENT_INFO,
           ];
         }
         else {
           $requirements['islandora_riprap_microservice_available'] = [
             'title' => t("Islandora Riprap"),
-            'description' => t("Riprap not found or is not running at @endpoint", array('@endpoint' => $riprap_endpoint)),
+            'description' => t("Riprap not found or is not running at @endpoint", ['@endpoint' => $riprap_endpoint]),
             'severity' => REQUIREMENT_ERROR,
           ];
         }
@@ -50,14 +55,14 @@ function islandora_riprap_requirements($phase) {
       if (file_exists($riprap_directory)) {
         $requirements['riprap_directory_exists'] = [
           'title' => t("Islandora Riprap"),
-          'description' => t("Riprap is installed at @directory. @chart_link.", array('@directory' => $riprap_directory, '@chart_link' => $utils->getLinkToFailedFixityEventsReport())),
+          'description' => t("Riprap is installed at @directory. @chart_link.", ['@directory' => $riprap_directory, '@chart_link' => $utils->getLinkToFailedFixityEventsReport()]),
           'severity' => REQUIREMENT_INFO,
         ];
       }
       else {
         $requirements['riprap_directory_exists'] = [
           'title' => t("Islandora Riprap"),
-          'description' => t("Riprap is not installed at @directory", array('@directory' => $riprap_directory)),
+          'description' => t("Riprap is not installed at @directory", ['@directory' => $riprap_directory]),
           'severity' => REQUIREMENT_ERROR,
         ];
       }

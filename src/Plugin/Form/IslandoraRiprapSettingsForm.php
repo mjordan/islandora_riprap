@@ -2,7 +2,6 @@
 
 namespace Drupal\islandora_riprap\Plugin\Form;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -10,13 +9,10 @@ use Drupal\Core\Form\FormStateInterface;
  * Configure example settings for this site.
  */
 class IslandoraRiprapSettingsForm extends ConfigFormBase {
-  /**
-   * The path to stored config file.
-   *
-   * @var string
-   */
-  protected $config_filepath;
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId() {
     return 'islandora_riprap_admin_settings';
   }
@@ -28,10 +24,6 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
     return [
       'islandora_riprap.settings',
     ];
-  }
-
-  public function __construct(ConfigFactoryInterface $config_factory) {
-    parent::__construct($config_factory);
   }
 
   /**
@@ -48,7 +40,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
     $utils = \Drupal::service('islandora_riprap.utils');
 
     $form['failed_fixity_events_report']['#markup'] = $utils->getLinkToFailedFixityEventsReport();
-    $form['riprap_mode'] = array(
+    $form['riprap_mode'] = [
       '#type' => 'radios',
       '#title' => $this->t('Riprap location'),
       '#options' => [
@@ -59,7 +51,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       '#attributes' => [
         'id' => 'riprap_mode',
       ],
-    );
+    ];
     $form['riprap_rest_endpoint'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Riprap microservice REST endpoint'),
@@ -169,7 +161,8 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
     if (!$current_config) {
       $current_config = t("No saved configuration found.");
     }
-    // $replacement_string = "drupal_media_auth: ['xxxxx', 'xxxxx']";
+    // @todo: Test this replacement.
+    $replacement_string = "drupal_media_auth: ['xxxxx', 'xxxxx']";
     $replacement_string = "drupal_media_auth: ['" . $form_state->getValue('user_name') . "', '" . $form_state->getValue('user_pass') . "']";
     $current_config = preg_replace('/drupal_media_auth.*\]/', $replacement_string, $current_config);
     $form['riprap_config']['current_setup'] = [
