@@ -76,7 +76,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
     ];
     $form['riprap_local_settings_file'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Absolute path to the settings YAML file used by the local Riprap installation'),
+      '#title' => $this->t('Absolute path to the YAML settings file used by the local Riprap installation'),
       '#description' => $this->t('For example, "/var/local/riprap/settings.yml". Used only when running in "local" mode. Ignore if you are using Riprap as a microservice.'),
       '#default_value' => $config->get('riprap_local_settings_file'),
       '#states' => [
@@ -97,7 +97,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
     ];
     $form['number_of_events'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Number of events to show in "Details" report. Leave empty to show all.'),
+      '#title' => $this->t('Number of events to show in each Media\'s "Details" report. Leave empty to show all.'),
       '#default_value' => $config->get('number_of_events'),
     ];
     $form['gemini_rest_endpoint'] = [
