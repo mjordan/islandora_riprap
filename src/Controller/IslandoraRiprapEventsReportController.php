@@ -10,13 +10,6 @@ use Drupal\Core\Controller\ControllerBase;
 class IslandoraRiprapEventsReportController extends ControllerBase {
 
   /**
-   * Constructor.
-   */
-  public function __construct() {
-    $config = \Drupal::config('islandora_riprap.settings');
-  }
-
-  /**
    * Output the markup that Chart.js needs.
    *
    * The chart itself is rendered via Javascript.
@@ -25,7 +18,6 @@ class IslandoraRiprapEventsReportController extends ControllerBase {
    *   Themed markup used by the events report.
    */
   public function main() {
-    $utils = \Drupal::service('islandora_riprap.utils');
     return [
       '#theme' => 'islandora_riprap_events_report',
     ];
