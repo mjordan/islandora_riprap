@@ -3,3 +3,9 @@ system.islandora_riprap_settings:
   parent: system.admin_config_islandora
   route_name: islandora_riprap.settings
   description: 'Configure fixity auditing reports produced by the Islandora Riprap module.'
+islandora_riprap.events_report:
+  title: 'Fixity Events'
+  parent: system.admin_reports
+  description: 'See failed fixity check events.'
+  route_name: islandora_riprap.events_report
+
