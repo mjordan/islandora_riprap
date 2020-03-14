@@ -1,3 +1,4 @@
+uuid: d4e7f73f-ff61-44f4-a993-e817c9a28d83
 langcode: en
 status: true
 dependencies:
@@ -8,12 +9,15 @@ dependencies:
   content:
     - 'taxonomy_term:islandora_media_use:01891e5c-f649-48a9-a6aa-a228c856013f'
   module:
+    - file
     - media
     - node
     - rest
     - serialization
     - taxonomy
     - user
+_core:
+  default_config_hash: _N_z8lq6meNQe29NBRcwZ0PHxszv9o8Lp58Do6q4iLc
 id: riprap_resource_list
 label: 'Riprap resource list'
 module: views
@@ -82,10 +86,10 @@ display:
           hide_empty: false
           default_field_elements: true
       fields:
-        uuid:
-          id: uuid
-          table: media
-          field: uuid
+        changed:
+          id: changed
+          table: media_field_data
+          field: changed
           relationship: none
           group_type: group
           admin_label: ''
@@ -131,9 +135,11 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: string
+          type: timestamp
           settings:
-            link_to_entity: false
+            date_format: custom
+            custom_date_format: 'Y-m-d\TH:i:sO'
+            timezone: ''
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -145,7 +151,73 @@ display:
           separator: ', '
           field_api_classes: false
           entity_type: media
-          entity_field: uuid
+          entity_field: changed
+          plugin_id: field
+        mid:
+          id: mid
+          table: media_field_data
+          field: mid
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_integer
+          settings:
+            thousand_separator: ''
+            prefix_suffix: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          entity_type: media
+          entity_field: mid
           plugin_id: field
       filters:
         status:
@@ -250,10 +322,10 @@ display:
           entity_field: type
           plugin_id: bundle
       sorts:
-        created:
-          id: created
+        changed:
+          id: changed
           table: media_field_data
-          field: created
+          field: changed
           relationship: none
           group_type: group
           admin_label: ''
@@ -263,7 +335,7 @@ display:
             label: ''
           granularity: second
           entity_type: media
-          entity_field: created
+          entity_field: changed
           plugin_id: date
       header: {  }
       footer: {  }
@@ -277,6 +349,24 @@ display:
           group_type: group
           admin_label: 'field_media_of: Content'
           required: true
+          plugin_id: standard
+        field_media_file_target_id:
+          id: field_media_file_target_id
+          table: media__field_media_file
+          field: field_media_file_target_id
+          relationship: none
+          group_type: group
+          admin_label: 'file from field_media_file'
+          required: false
+          plugin_id: standard
+        field_media_image_target_id:
+          id: field_media_image_target_id
+          table: media__field_media_image
+          field: field_media_image_target_id
+          relationship: none
+          group_type: group
+          admin_label: 'image from field_media_image'
+          required: false
           plugin_id: standard
       arguments: {  }
       display_extenders: {  }
@@ -300,15 +390,17 @@ display:
       display_extenders: {  }
       path: riprap_resource_list
       pager:
-        type: mini
+        type: full
         options:
-          items_per_page: 50
+          items_per_page: 100
           offset: 0
           id: 0
           total_pages: null
           tags:
             previous: '‹ Previous'
             next: 'Next ›'
+            first: '« First'
+            last: 'Last »'
           expose:
             items_per_page: false
             items_per_page_label: 'Items per page'
@@ -317,6 +409,7 @@ display:
             items_per_page_options_all_label: '- All -'
             offset: false
             offset_label: Offset
+          quantity: 9
       style:
         type: serializer
         options:
