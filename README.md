@@ -22,6 +22,7 @@ This module provides the following:
 
 1. Clone this repo into your Islandora's `drupal/web/modules/contrib` directory.
 1. Enable the module either under the "Admin > Extend" menu or by running `drush en -y islandora_riprap`.
+1. Modify the "Riprap resource (media) list" View this module installs to determine which Media Riprap audits.
 
 ## Configuration
 
