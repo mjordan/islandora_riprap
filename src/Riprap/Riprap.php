@@ -3,11 +3,14 @@
 namespace Drupal\islandora_riprap\Riprap;
 
 use Symfony\Component\Process\Process;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Utilities for interacting with a Riprap fixity microservice.
  */
 class Riprap {
+
+  use StringTranslationTrait;
 
   /**
    * Constructor.
