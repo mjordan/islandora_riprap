@@ -2,7 +2,7 @@
 
 ## Introduction
 
-A Drupal 8 module to provide node-level and repository-level reports using data from a [Riprap](https://github.com/mjordan/riprap) fixity microservice.
+A Drupal 8/9 module to provide node-level and repository-level reports using data from a [Riprap](https://github.com/mjordan/riprap) fixity microservice.
 
 ## Overview
 
@@ -17,6 +17,8 @@ This module provides the following:
 
 * [Islandora 8](https://github.com/Islandora/islandora)
 * A [Riprap](https://github.com/mjordan/riprap) fixity microservice.
+
+This module is ready for Drupal 9.
 
 ## Installation
 
