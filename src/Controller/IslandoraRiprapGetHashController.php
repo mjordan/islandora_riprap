@@ -26,7 +26,7 @@ class IslandoraRiprapGetHashController extends ControllerBase {
     $file = reset($file);    
     $checksum = hash_file($algorithm, $file->getFileUri());
     $response[] = [
-      'checksume' => $checksum,
+      'checksum' => $checksum,
       'file_uuid' => $file_uuid,
       'algorithm' => $algorithm,
     ];
