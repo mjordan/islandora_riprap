@@ -29,6 +29,7 @@ class IslandoraRiprapGetHashController extends ControllerBase {
       'checksum' => $checksum,
       'file_uuid' => $file_uuid,
       'algorithm' => $algorithm,
+      'url' => file_create_url($file->getFileUri()),
     ];
 
     return new JsonResponse($response);
