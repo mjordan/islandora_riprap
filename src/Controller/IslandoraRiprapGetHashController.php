@@ -11,12 +11,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class IslandoraRiprapGetHashController extends ControllerBase {
 
   /**
-   * Gets the hash of the file identified by the UUID.
+   * Gets the checksum of the file identified by the UUID.
    *
    * @param string $file_uuid
    *   The UUID of the file.
    * @param string $algorith
-   *   One of 'md5', 'sha1', or 'sha256'.
+   *   One of 'md5', 'sha1', or 'sha256'. If not provided, only
+   *   the file_uuid and url will be returned.
    *
    * @return JsonResponse
    *   A JSON response. 
@@ -25,12 +26,20 @@ class IslandoraRiprapGetHashController extends ControllerBase {
     $file = \Drupal::entityTypeManager()->getStorage('file')->loadByProperties(['uuid' => $file_uuid]);
     $file = reset($file);    
     $checksum = hash_file($algorithm, $file->getFileUri());
-    $response[] = [
-      'checksum' => $checksum,
-      'file_uuid' => $file_uuid,
-      'algorithm' => $algorithm,
-      'url' => file_create_url($file->getFileUri()),
-    ];
+    if (is_null($algorithm)) {
+      $response[] = [
+        'file_uuid' => $file_uuid,
+        'url' => file_create_url($file->getFileUri()),
+      ];
+    }
+    else {
+      $response[] = [
+        'checksum' => $checksum,
+        'file_uuid' => $file_uuid,
+        'algorithm' => $algorithm,
+        'url' => file_create_url($file->getFileUri()),
+      ];
+    }
 
     return new JsonResponse($response);
   }
