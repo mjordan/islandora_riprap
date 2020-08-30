@@ -24,10 +24,9 @@ islandora_riprap.events_report:
     _permission: 'administer site configuration'
 
 islandora.riprap.hash:
-  path: '/islandora_riprap/checksum/{file_uuid}/{algorithm}'
+  path: '/islandora_riprap/checksum'
   defaults:
     _controller: '\Drupal\islandora_riprap\Controller\IslandoraRiprapGetHashController::main'
-    algorithm: null
   methods: [GET]
   requirements:
     # Defined by the Islandora module.

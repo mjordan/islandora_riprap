@@ -4,13 +4,18 @@ status: true
 dependencies:
   config:
     - node.type.islandora_object
+    - taxonomy.vocabulary.islandora_media_use
     - user.role.administrator
+  content:
+    - 'taxonomy_term:islandora_media_use:03a09178-0404-42d4-8146-9069baad5448'
+    - 'taxonomy_term:islandora_media_use:bd001295-f149-4584-ae0d-c3713b94034e'
   module:
     - file
     - media
     - node
     - rest
     - serialization
+    - taxonomy
     - user
 _core:
   default_config_hash: 5Ois4xJW_SoggcQW-UAHYO142P0PH_I6TaIhXuQJaXY
@@ -271,6 +276,53 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
+        field_media_use_target_id:
+          id: field_media_use_target_id
+          table: media__field_media_use
+          field: field_media_use_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value:
+            - 17
+            - 18
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: textfield
+          limit: true
+          vid: islandora_media_use
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
       sorts:
         changed:
           id: changed
@@ -351,6 +403,7 @@ display:
         - 'languages:language_interface'
         - request_format
         - url.query_args
+        - user
         - user.roles
       tags: {  }
   rest_export_1:
@@ -404,5 +457,6 @@ display:
         - 'languages:language_interface'
         - request_format
         - url.query_args
+        - user
         - user.roles
       tags: {  }

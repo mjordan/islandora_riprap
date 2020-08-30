@@ -81,7 +81,9 @@ If failed events exist, the report will inidcate the number of events per month:
 This module installs the "Riprap resource list" View, which is used by Riprap to get the media to perform fixity checks on. It comes preconfigured as follows:
 
 * Fields: "Changed" and "Media: ID". Do not remove these fields.
-* Filter criteria: Published nodes of type Repository Item
+* Filter criteria
+  * Published nodes of type Repository Item
+  * Meda Use tags "Original File" and "Preservation Master"
 * Relationships
   * field_media_of: Content
   * file from field_media_file
@@ -89,7 +91,7 @@ This module installs the "Riprap resource list" View, which is used by Riprap to
   * file from field_media_audio_file
   * file from field_media_document
 
-You will want to adjust the filter criteria to include your own content types, and, if you create new media types, the field that contains the new media's file.
+You will want to adjust the filter criteria to include your own content types, Media Use tags, and, if you create new media types, the field that contains the new media's file.
 
 ## Current maintainer
 

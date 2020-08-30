@@ -13,33 +13,34 @@ class IslandoraRiprapGetHashController extends ControllerBase {
   /**
    * Gets the checksum of the file identified by the UUID.
    *
-   * @param string $file_uuid
-   *   The UUID of the file.
-   * @param string $algorith
-   *   One of 'md5', 'sha1', or 'sha256'. If not provided, only
-   *   the file_uuid and url will be returned.
+   * This endpoint uses two query parameters, 'file_uuid' and
+   * 'algorithm', to get a file entity's checksum. 'algorithm'
+   * is one of 'md5', 'sha1', or 'sha256'.
    *
    * @return JsonResponse
-   *   A JSON response. 
+   *   A JSON response with the keys below. 
    */
-  public function main($file_uuid, $algorithm) {
-    $file = \Drupal::entityTypeManager()->getStorage('file')->loadByProperties(['uuid' => $file_uuid]);
-    $file = reset($file);    
+  public function main() {
+    $file_uri = \Drupal::request()->query->get('file_uri');
+    $algorithm = \Drupal::request()->query->get('algorithm');
+
+    if (is_null($file_uri) || is_null($algorithm)) {
+      return new JsonResponse(['error' => 'Request is missing either the "file_uri" or "algorithm" parameter.']);
+    }
+    if (!in_array($algorithm, ['md5', 'sha1', 'sha256'])) {
+      return new JsonResponse(['error' => '"algorithm" parameter must be one of "md5", "sha1", or "sha256".']);
+    }
+
+    $file = \Drupal::entityTypeManager()->getStorage('file')->loadByProperties(['uri' => $file_uri]);
+    $file = reset($file);
     $checksum = hash_file($algorithm, $file->getFileUri());
-    if (is_null($algorithm)) {
-      $response[] = [
-        'file_uuid' => $file_uuid,
-        'url' => file_create_url($file->getFileUri()),
-      ];
-    }
-    else {
-      $response[] = [
-        'checksum' => $checksum,
-        'file_uuid' => $file_uuid,
-        'algorithm' => $algorithm,
-        'url' => file_create_url($file->getFileUri()),
-      ];
-    }
+    $response[] = [
+      'checksum' => $checksum,
+      'file_uuid' => $file->uuid(),
+      'algorithm' => $algorithm,
+      'uri' => $file->getFileUri(),
+      'url' => file_create_url($file->getFileUri()),
+    ];
 
     return new JsonResponse($response);
   }
