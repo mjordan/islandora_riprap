@@ -26,16 +26,14 @@ This module is ready for Drupal 9.
 1. Enable the module either under the "Admin > Extend" menu or by running `drush en -y islandora_riprap`.
 1. Modify the "Riprap resource (media) list" View this module installs to determine which Media Riprap audits.
 
-If you use the `PluginFetchResourceListFromDrupal` Riprap plugin, you will also need to enable Drupal's JSON:API module.
-
 ## Configuration
 
 > Note: If you are running Islandora in a CLAW Playbook Vagrant machine and Riprap on the Vagrant host machine, start the Riprap web server by running `php bin/console server:start *:8001` in the Riprap directory. Then in Drupal, make sure your "Riprap microservice REST endpoint" setting says "http://10.0.2.2:8001/api/fixity".
 
-Configuration options for Islandora Riprap are available at `admin/config/islandora_riprap/settings`, or at Configuration > Islandora > Fixity auditing.
+Configuration options for Islandora Riprap are available at `admin/config/islandora_riprap/settings`, or at Configuration > Islandora > Fixity auditing. You will probably want to base your Riprap configuration on either the `sample_islandora_config.yml` or `sample_islandora_config_fetch_digest_from_drupal.yml` configuration files supplied by Riprap.
 
 ### Remote vs. local mode
-
+` configuration files supplied by Riprap a
 This module supports two ways of integrating with Riprap, either in "remote" mode or "local" mode.
 
 * In remote mode, Drupal interacts with Riprap over HTTP. This mode allows Riprap to be running on a server separate from the one Drupal is running on. This is the recommended configuration for large site, or for sites that are using Riprap to perform fixity auditing on resources that are not all managed by Islandora.
