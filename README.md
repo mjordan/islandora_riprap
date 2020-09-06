@@ -32,8 +32,25 @@ This module is ready for Drupal 9.
 
 Configuration options for Islandora Riprap are available at `admin/config/islandora_riprap/settings`, or at Configuration > Islandora > Fixity auditing. You will probably want to base your Riprap configuration on either the `sample_islandora_config.yml` or `sample_islandora_config_fetch_digest_from_drupal.yml` configuration files supplied by Riprap.
 
+### The Riprap resource list View
+
+This module installs the "Riprap resource list" View, which is used by Riprap to get the media to perform fixity checks on. It comes preconfigured as follows:
+
+* Fields: "Changed" and "Media: ID". Do not remove these fields.
+* Filter criteria
+  * Published nodes of type Repository Item
+  * Meda Use tags "Original File" and "Preservation Master"
+* Relationships
+  * field_media_of: Content
+  * file from field_media_file
+  * image from field_media_image
+  * file from field_media_audio_file
+  * file from field_media_document
+
+You will want to adjust the filter criteria to include your own content types, Media Use tags, and, if you create new media types, the field that contains the new media's file.
+
 ### Remote vs. local mode
-` configuration files supplied by Riprap a
+
 This module supports two ways of integrating with Riprap, either in "remote" mode or "local" mode.
 
 * In remote mode, Drupal interacts with Riprap over HTTP. This mode allows Riprap to be running on a server separate from the one Drupal is running on. This is the recommended configuration for large site, or for sites that are using Riprap to perform fixity auditing on resources that are not all managed by Islandora.
@@ -74,22 +91,6 @@ If failed events exist, the report will inidcate the number of events per month:
 
 ![failed fixity events](docs/fixity_events_report_failures.png)
 
-### The Riprap resource list View
-
-This module installs the "Riprap resource list" View, which is used by Riprap to get the media to perform fixity checks on. It comes preconfigured as follows:
-
-* Fields: "Changed" and "Media: ID". Do not remove these fields.
-* Filter criteria
-  * Published nodes of type Repository Item
-  * Meda Use tags "Original File" and "Preservation Master"
-* Relationships
-  * field_media_of: Content
-  * file from field_media_file
-  * image from field_media_image
-  * file from field_media_audio_file
-  * file from field_media_document
-
-You will want to adjust the filter criteria to include your own content types, Media Use tags, and, if you create new media types, the field that contains the new media's file.
 
 ## Current maintainer
 
