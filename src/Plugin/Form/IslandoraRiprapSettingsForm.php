@@ -123,6 +123,13 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('use_sample_failed_fixity_events'),
     ];
 
+    $form['media_fields'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Media Fields'),
+      '#description' => $this->t('Select which media fields to get the files from. Add multiple fields by placing them on separate lines.'),
+      '#default_value' => $config->get('media_fields'),
+    ];
+
     $form['riprap_config'] = [
       '#type' => 'details',
       '#collapsible' => TRUE,
@@ -216,6 +223,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       ->set('fixity_content_type', $form_state->getValue('fixity_content_type'))
       ->set('user_name', $form_state->getValue('user_name'))
       ->set('user_pass', $form_state->getValue('user_pass'))
+      ->set('media_fields', $form_state->getValue('media_fields'))
       ->save();
 
     parent::submitForm($form, $form_state);
