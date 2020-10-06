@@ -14,8 +14,8 @@ class IslandoraRiprapUtils {
    * Constructor.
    */
   public function __construct() {
-    $config = \Drupal::config('islandora_riprap.settings');
-    $this->gemini_endpoint = $config->get('gemini_rest_endpoint') ?: 'http://localhost:8000/gemini';
+    $this->config = \Drupal::config('islandora_riprap.settings');
+    $this->gemini_endpoint = $this->config->get('gemini_rest_endpoint') ?: 'http://localhost:8000/gemini';
     $this->riprap = \Drupal::service('islandora_riprap.riprap');
   }
 
@@ -29,18 +29,26 @@ class IslandoraRiprapUtils {
    *   The UUID of the file associated with the incoming Media entity.
    */
   public function getFileUuid($mid) {
-    $media_fields = [
-      'field_media_file',
-      'field_media_image',
-      'field_media_audio_file',
-      'field_media_video_file',
-    ];
-
+    if ($this->config->get('media_fields')) {
+      $media_fields_config = $this->config->get('media_fields');
+      $media_fields = preg_split('/\n/', $media_fields_config);
+    }
+    else {
+      $media_fields = [
+        'field_media_file',
+	'field_media_document',
+	'field_media_image',
+	'field_media_audio_file',
+	'field_media_video_file',
+      ];
+    }
     $media = Media::load($mid);
     // Loop through each of the media fields and get the UUID of the File
     // in the first one encountered. Assumes each Media entity has only
     // one of the media file fields.
     foreach ($media_fields as $media_field) {
+      $media_field = trim($media_field);
+
       if (isset($media->$media_field)) {
         $files = $media->get($media_field);
         $file = $files->first();

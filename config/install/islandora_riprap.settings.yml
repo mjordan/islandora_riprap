@@ -12,3 +12,4 @@ fixity_terms: 16
 fixity_content_type: Repository Item
 user_name: admin
 user_pass: islandora
+media_fields: "field_media_file\nfield_media_document\nfield_media_image\nfield_media_video_file\nfield_media_audio_file"
