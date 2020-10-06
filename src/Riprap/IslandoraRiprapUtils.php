@@ -29,9 +29,19 @@ class IslandoraRiprapUtils {
    *   The UUID of the file associated with the incoming Media entity.
    */
   public function getFileUuid($mid) {
-    $media_fields_config = $this->config->get('media_fields');
-    $media_fields = preg_split('/\n/', $media_fields_config);
-
+    if ($this->config->get('media_fields')) {
+      $media_fields_config = $this->config->get('media_fields');
+      $media_fields = preg_split('/\n/', $media_fields_config);
+    }
+    else {
+      $media_fields = [
+        'field_media_file',
+	'field_media_document',
+	'field_media_image',
+	'field_media_audio_file',
+	'field_media_video_file',
+      ];
+    }
     $media = Media::load($mid);
     // Loop through each of the media fields and get the UUID of the File
     // in the first one encountered. Assumes each Media entity has only
