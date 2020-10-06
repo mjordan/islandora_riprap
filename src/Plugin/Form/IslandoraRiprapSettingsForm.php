@@ -127,7 +127,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       '#type' => 'textarea',
       '#title' => $this->t('Media Fields'),
       '#description' => $this->t('Select which media fields to get the files from. Add multiple fields by placing them on separate lines.'),
-      '#default_value' => $config->get('media_fields'),
+      '#default_value' => ($config->get('media_fields') ? $config->get('media_fields') : "field_media_file\nfield_media_document\nfield_media_image\nfield_media_video_file\nfield_media_audio_file"),
     ];
 
     $form['riprap_config'] = [
