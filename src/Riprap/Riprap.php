@@ -39,6 +39,7 @@ class Riprap {
     }
 
     try {
+      $resource_id = $options['resource_id'];
       // Assumes Riprap requires no authentication
       // (e.g., it's behind the Symfony or other firewall).
       $client = \Drupal::httpClient();
