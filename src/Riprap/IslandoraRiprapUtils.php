@@ -120,7 +120,7 @@ class IslandoraRiprapUtils {
       'field_media_video_file',
     ];
     $media = Media::load($mid);
-    // Loop through each of the media fields and get the UUID of the File
+    // Loop through each of the media fields and get the URL of the File
     // in the first one encountered. Assumes each Media entity has only
     // one of the media file fields.
     foreach ($media_fields as $media_field) {
