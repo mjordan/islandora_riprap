@@ -3,6 +3,7 @@
 namespace Drupal\islandora_riprap\Riprap;
 
 use Drupal\media\Entity\Media;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Link;
 
 /**
@@ -68,7 +69,37 @@ class IslandoraRiprapUtils {
    * @return string
    *   The Fedora URL corresponding to the UUID, or a message.
    */
-  public function getFedoraUrl($uuid) {
+  public function getFedoraUrl($mid) {
+    $media = Media::load($mid);
+    $media_source_service = \Drupal::service('islandora.media_source_service');
+    $source_file = $media_source_service->getSourceFile($media);
+    $uri = $source_file->getFileUri();
+    $scheme = \Drupal::service('stream_wrapper_manager')->getScheme($uri);
+    $flysystem_config = Settings::get('flysystem');
+
+    $mapper = \Drupal::service('islandora.entity_mapper');
+    if (isset($flysystem_config[$scheme]) && $flysystem_config[$scheme]['driver'] == 'fedora') {
+      $parts = parse_url($uri);
+          $path = $parts['host'] . $parts['path'];
+     }
+     else {
+       $path = $mapper->getFedoraPath($source_file->uuid());
+     }
+     $path = trim($path, '/');
+     $fedora_uri = "$fedora_root/$path";
+     return($fedora_uri);
+  }
+
+  /**
+   * Get a Fedora URL for a File entity from Gemini.
+   *
+   * @param string $uuid
+   *   The File entity's UUID.
+   *
+   * @return string
+   *   The Fedora URL corresponding to the UUID, or a message.
+   */
+  public function _getFedoraUrl($uuid) {
     try {
       $container = \Drupal::getContainer();
       $jwt = $container->get('jwt.authentication.jwt');

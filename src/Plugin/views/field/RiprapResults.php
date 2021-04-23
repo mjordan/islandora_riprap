@@ -41,7 +41,7 @@ class RiprapResults extends FieldPluginBase {
       $binary_resource_url = $utils->getLocalUrl($mid);
     }
     else {
-      $binary_resource_url = $utils->getFedoraUrl($binary_resource_uuid);
+      $binary_resource_url = $utils->getFedoraUrl($mid);
     }
 
     $num_events = $config->get('number_of_events') ?: 10;
