@@ -63,11 +63,11 @@ class IslandoraRiprapUtils {
   /**
    * Get a Fedora URL for a File entity from Gemini.
    *
-   * @param string $uuid
-   *   The File entity's UUID.
+   * @param string $mid
+   *   The Meida entity's ID.
    *
    * @return string
-   *   The Fedora URL corresponding to the UUID, or a message.
+   *   The Fedora URL to the file corresponding to the Media's ID, or False.
    */
   public function getFedoraUrl($mid) {
     $media = Media::load($mid);
@@ -75,60 +75,21 @@ class IslandoraRiprapUtils {
     $source_file = $media_source_service->getSourceFile($media);
     $uri = $source_file->getFileUri();
     $scheme = \Drupal::service('stream_wrapper_manager')->getScheme($uri);
-    $flysystem_config = Settings::get('flysystem');
-
     $mapper = \Drupal::service('islandora.entity_mapper');
+
+    $flysystem_config = Settings::get('flysystem');
     if (isset($flysystem_config[$scheme]) && $flysystem_config[$scheme]['driver'] == 'fedora') {
+      $fedora_root = $flysystem_config['fedora']['config']['root'];
+      $fedora_root = rtrim($fedora_root, '/');
       $parts = parse_url($uri);
           $path = $parts['host'] . $parts['path'];
-     }
-     else {
-       $path = $mapper->getFedoraPath($source_file->uuid());
-     }
-     $path = trim($path, '/');
-     $fedora_uri = "$fedora_root/$path";
-     return($fedora_uri);
-  }
-
-  /**
-   * Get a Fedora URL for a File entity from Gemini.
-   *
-   * @param string $uuid
-   *   The File entity's UUID.
-   *
-   * @return string
-   *   The Fedora URL corresponding to the UUID, or a message.
-   */
-  public function _getFedoraUrl($uuid) {
-    try {
-      $container = \Drupal::getContainer();
-      $jwt = $container->get('jwt.authentication.jwt');
-      $auth = 'Bearer ' . $jwt->generateToken();
-      $client = \Drupal::httpClient();
-      $options = [
-        'http_errors' => FALSE,
-        'headers' => ['Authorization' => $auth],
-      ];
-      $url = $this->gemini_endpoint . '/' . $uuid;
-      $response = $client->request('GET', $url, $options);
-      $code = $response->getStatusCode();
-      if ($code == 200) {
-        $body = $response->getBody()->getContents();
-        $body_array = json_decode($body, TRUE);
-        return $body_array['fedora'];
-      }
-      elseif ($code == 404) {
-        $body = $response->getBody()->getContents();
-        return 'Not in Fedora';
-      }
-      else {
-        \Drupal::logger('islandora_riprap')->error('HTTP response code: @code', ['@code' => $code]);
-      }
     }
-    catch (RequestException $e) {
-      \Drupal::logger('islandora_riprap')->error($e->getMessage());
-      return "Sorry, there has been an error, please refer to the system log";
+    else {
+      return false;
     }
+    $path = ltrim($path, '/');
+    $fedora_uri = "$fedora_root/$path";
+    return($fedora_uri);
   }
 
   /**
@@ -144,12 +105,19 @@ class IslandoraRiprapUtils {
    *   incoming Media entity.
    */
   public function getLocalUrl($mid) {
-    $media_fields = [
-      'field_media_file',
-      'field_media_image',
-      'field_media_audio_file',
-      'field_media_video_file',
-    ];
+    if ($this->config->get('media_fields')) {
+      $media_fields_config = $this->config->get('media_fields');
+      $media_fields = preg_split('/\n/', $media_fields_config);
+    }
+    else {
+      $media_fields = [
+        'field_media_file',
+	'field_media_document',
+	'field_media_image',
+	'field_media_audio_file',
+	'field_media_video_file',
+      ];
+    }
     $media = Media::load($mid);
     // Loop through each of the media fields and get the URL of the File
     // in the first one encountered. Assumes each Media entity has only
