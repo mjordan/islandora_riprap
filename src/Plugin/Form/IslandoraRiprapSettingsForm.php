@@ -120,7 +120,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
     $form['media_fields'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Media Fields'),
-      '#description' => $this->t('Select which media fields to get the files from. Add multiple fields by placing them on separate lines.'),
+      '#description' => $this->t('Indicate which media fields to get the files from. Add multiple fields by placing them on separate lines.'),
       '#default_value' => ($config->get('media_fields') ? $config->get('media_fields') : "field_media_file\nfield_media_document\nfield_media_image\nfield_media_video_file\nfield_media_audio_file"),
     ];
 
@@ -209,6 +209,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       ->set('riprap_local_settings_file', rtrim($form_state->getValue('riprap_local_settings_file'), '/'))
       ->set('execute_riprap_in_cron', $form_state->getValue('execute_riprap_in_cron'))
       ->set('number_of_events', $form_state->getValue('number_of_events'))
+      ->set('gemini_rest_endpoint', rtrim($form_state->getValue('gemini_rest_endpoint'), '/'))
       ->set('use_drupal_urls', $form_state->getValue('use_drupal_urls'))
       ->set('log_riprap_warnings', $form_state->getValue('log_riprap_warnings'))
       ->set('use_sample_failed_fixity_events', $form_state->getValue('use_sample_failed_fixity_events'))
@@ -241,14 +242,22 @@ fixity_algorithm: sha256
 # Plugins #
 ###########
 
-# Use this plugin if you want to use the 'Riprap resource (media) list' View provided by Islandora Riprap.
-plugins.fetchresourcelist: ['PluginFetchResourceListFromDrupalView']
+plugins.fetchresourcelist: ['PluginFetchResourceListFromDrupal']
 drupal_baseurl: '$base_url'
-drupal_user: {$values['user_name']}
-drupal_password: {$values['user_pass']}
-fedora_baseurl: 'http://127.0.0.1:8080/fcrepo/rest'
-# Absolute or relative to the Riprap application directory.
-views_pager_data_file_path: 'var/fetchresourcelist.from.drupal.pager.txt'
+jsonapi_authorization_headers: ['Authorization: Basic YWRtaW46aXNsYW5kb3Jh']
+drupal_media_auth: ['{$values['user_name']}', '{$values['user_pass']}']
+drupal_content_types: ['{$values['fixity_content_type']}']
+drupal_media_tags: ['/taxonomy/term/{$values['fixity_terms']}']
+use_fedora_urls: true
+gemini_endpoint: '{$values['gemini_rest_endpoint']}'
+gemini_auth_header: 'Bearer islandora'
+# Can be a maximum of 50.
+jsonapi_page_size: 50
+# The number of resources to check in one Riprap run; if absent, will use
+# value defined in jsonapi_page_size. Must be a multiple of number specified
+# in jsonapi_page_size.
+max_resources: 1000
+jsonapi_pager_data_file_path: '/var/www/html/riprap/var/fetchresourcelist.from.drupal.pager.txt'
 
 plugins.fetchdigest: PluginFetchDigestFromFedoraAPI
 fedoraapi_method: HEAD
@@ -259,7 +268,6 @@ plugins.persist: PluginPersistToDatabase
 plugins.postcheck: ['PluginPostCheckCopyFailures']
 # Absolute or relative to the Riprap application directory.
 failures_log_path: '/tmp/riprap_failed_events.log'
-
 EOF;
     return $riprap_config;
   }

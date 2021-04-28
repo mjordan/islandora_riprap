@@ -129,6 +129,7 @@ class Riprap {
       return TRUE;
     }
     else {
+      \Drupal::logger('islandora_riprap')->error($process->getErrorOutput());
       return FALSE;
     }
   }
