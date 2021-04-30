@@ -100,12 +100,6 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Number of events to show in each Media\'s "Details" report. Leave empty to show all.'),
       '#default_value' => $config->get('number_of_events'),
     ];
-    $form['gemini_rest_endpoint'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Gemini microservice REST endpoint'),
-      '#description' => $this->t('Do not include the trailing /.'),
-      '#default_value' => $config->get('gemini_rest_endpoint'),
-    ];
     $form['use_drupal_urls'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Use Drupal URLs for media instead of Fedora URLs. Check this box only if you are not using Fedora.'),
@@ -126,7 +120,7 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
     $form['media_fields'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Media Fields'),
-      '#description' => $this->t('Select which media fields to get the files from. Add multiple fields by placing them on separate lines.'),
+      '#description' => $this->t('Indicate which media fields to get the files from. Add multiple fields by placing them on separate lines.'),
       '#default_value' => ($config->get('media_fields') ? $config->get('media_fields') : "field_media_file\nfield_media_document\nfield_media_image\nfield_media_video_file\nfield_media_audio_file"),
     ];
 

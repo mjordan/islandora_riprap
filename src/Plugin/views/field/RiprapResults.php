@@ -35,13 +35,20 @@ class RiprapResults extends FieldPluginBase {
 
     $media = $value->_entity;
     $mid = $media->id();
-    $binary_resource_uuid = $utils->getFileUuid($mid);
 
     if ($this->use_drupal_urls) {
       $binary_resource_url = $utils->getLocalUrl($mid);
     }
     else {
-      $binary_resource_url = $utils->getFedoraUrl($binary_resource_uuid);
+      $binary_resource_url = $utils->getFedoraUrl($mid);
+      if (!$binary_resource_url) {
+        return [
+          '#theme' => 'islandora_riprap_summary',
+          '#content' => 'Not in Fedora',
+          '#outcome' => NULL,
+          '#mid' => NULL,
+        ];
+      }
     }
 
     $num_events = $config->get('number_of_events') ?: 10;

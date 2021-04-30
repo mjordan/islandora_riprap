@@ -172,7 +172,7 @@ function islandora_riprap_islandora_premis_turtle_alter($nid, &$turtle) {
         $binary_resource_url = $islandora_riprap_utils->getLocalUrl($medium->id());
       }
       else {
-        $binary_resource_url = $islandora_riprap_utils->getFedoraUrl($file->uuid());
+        $binary_resource_url = $islandora_riprap_utils->getFedoraUrl($medium->id());
       }
 
       // Create the graph from existing Turtle.

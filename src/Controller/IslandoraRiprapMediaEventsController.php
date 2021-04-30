@@ -39,7 +39,7 @@ class IslandoraRiprapMediaEventsController extends ControllerBase {
       $binary_resource_url = $utils->getLocalUrl($mid);
     }
     else {
-      $binary_resource_url = $utils->getFedoraUrl($binary_resource_uuid);
+      $binary_resource_url = $utils->getFedoraUrl($mid);
     }
 
     $riprap_output = $riprap->getEvents(['output_format' => 'json', 'resource_id' => $binary_resource_url]);
