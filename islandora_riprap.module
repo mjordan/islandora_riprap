@@ -1,5 +1,7 @@
 <?php
 
+use EasyRdf\Graph;
+
 /**
  * @file
  * Contains the islandora_riprap.module.
@@ -176,7 +178,7 @@ function islandora_riprap_islandora_premis_turtle_alter($nid, &$turtle) {
       }
 
       // Create the graph from existing Turtle.
-      $graph = new EasyRdf_Graph();
+      $graph = new Graph();
       $graph->parse($turtle);
 
       // Get fixity events and express them as PREMIS RDF.
