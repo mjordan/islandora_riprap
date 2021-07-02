@@ -32,13 +32,12 @@ class IslandoraRiprapMediaEventsController extends ControllerBase {
     $path_args = explode('/', $current_path);
     $mid = $path_args[2];
 
-    $utils = \Drupal::service('islandora_riprap.utils');
-    $binary_resource_uuid = $utils->getFileUuid($mid);
+    $binary_resource_uuid = $riprap->getFileUuid($mid);
     if ($this->use_drupal_urls) {
-      $binary_resource_url = $utils->getLocalUrl($mid);
+      $binary_resource_url = $riprap->getLocalUrl($mid);
     }
     else {
-      $binary_resource_url = $utils->getFedoraUrl($mid);
+      $binary_resource_url = $riprap->getFedoraUrl($mid);
     }
 
     $riprap_output = $riprap->getEvents(['output_format' => 'json', 'resource_id' => $binary_resource_url]);

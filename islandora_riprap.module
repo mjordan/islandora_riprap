@@ -74,9 +74,9 @@ function islandora_riprap_page_attachments(array &$attachments) {
   }
 
   if ($current_path == '/admin/reports/islandora_riprap') {
-    $utils = \Drupal::service('islandora_riprap.utils');
+    $riprap_utils = \Drupal::service('islandora_riprap.riprap');
     if ($config->get('use_sample_failed_fixity_events')) {
-      $riprap_data = $utils->getSampleFailedFixityEventsReportData();
+      $riprap_data = $riprap_utils->getSampleFailedFixityEventsReportData();
       $dataset = new StdClass();
       $dataset->data = array_values($riprap_data);
       $total_failed_events = array_sum($dataset->data);
@@ -94,7 +94,7 @@ function islandora_riprap_page_attachments(array &$attachments) {
       return;
     }
     else {
-      $riprap_data = $utils->getFailedFixityEventsReportData();
+      $riprap_data = $riprap_utils->getFailedFixityEventsReportData();
       $total_failed_events = array_sum(array_values($riprap_data));
     }
 
@@ -159,13 +159,12 @@ function islandora_riprap_cron() {
  */
 function islandora_riprap_islandora_premis_turtle_alter($nid, &$turtle) {
   $config = \Drupal::config('islandora_riprap.settings');
-  $utils = \Drupal::service('islandora.utils');
   $riprap = \Drupal::service('islandora_riprap.riprap');
   $islandora_riprap_utils = \Drupal::service('islandora_riprap.utils');
   $media_source = \Drupal::service('islandora.media_source_service');
 
   $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
-  $media = $utils->getMedia($node);
+  $media = $riprap->getMedia($node);
 
   if (count($media) > 0) {
     foreach ($media as $medium) {

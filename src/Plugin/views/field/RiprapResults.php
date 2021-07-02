@@ -30,17 +30,16 @@ class RiprapResults extends FieldPluginBase {
     $config = \Drupal::config('islandora_riprap.settings');
     $this->use_drupal_urls = $config->get('use_drupal_urls') ?: FALSE;
 
-    $utils = \Drupal::service('islandora_riprap.utils');
     $riprap = \Drupal::service('islandora_riprap.riprap');
 
     $media = $value->_entity;
     $mid = $media->id();
 
     if ($this->use_drupal_urls) {
-      $binary_resource_url = $utils->getLocalUrl($mid);
+      $binary_resource_url = $riprap->getLocalUrl($mid);
     }
     else {
-      $binary_resource_url = $utils->getFedoraUrl($mid);
+      $binary_resource_url = $riprap->getFedoraUrl($mid);
       if (!$binary_resource_url) {
         return [
           '#theme' => 'islandora_riprap_summary',

@@ -37,9 +37,9 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       $term_data[$term->tid] = $term->name;
     }
 
-    $utils = \Drupal::service('islandora_riprap.utils');
+    $riprap_utils = \Drupal::service('islandora_riprap.riprap');
 
-    $form['failed_fixity_events_report']['#markup'] = $utils->getLinkToFailedFixityEventsReport();
+    $form['failed_fixity_events_report']['#markup'] = $riprap_utils->getLinkToFailedFixityEventsReport();
     $form['riprap_mode'] = [
       '#type' => 'radios',
       '#title' => $this->t('Riprap location'),
