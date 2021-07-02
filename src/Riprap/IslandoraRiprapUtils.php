@@ -71,8 +71,14 @@ class IslandoraRiprapUtils {
   public function getFedoraUrl($mid) {
     $media = Media::load($mid);
     $media_source_service = \Drupal::service('islandora.media_source_service');
-    $source_file = $media_source_service->getSourceFile($media);
-    $uri = $source_file->getFileUri();
+    $source_file = (is_object($media)) ? $media_source_service->getSourceFile($media) : NULL;
+//    $uri = $source_file->getFileUri();
+    if ($source_file) {
+      $uri = $source_file->getFileUri();
+    }
+    else {
+      return false;
+    }
     $scheme = \Drupal::service('stream_wrapper_manager')->getScheme($uri);
     $mapper = \Drupal::service('islandora.entity_mapper');
 
