@@ -16,7 +16,6 @@ class IslandoraRiprapUtils {
    */
   public function __construct() {
     $this->config = \Drupal::config('islandora_riprap.settings');
-    $this->gemini_endpoint = $this->config->get('gemini_rest_endpoint') ?: 'http://localhost:8000/gemini';
     $this->riprap = \Drupal::service('islandora_riprap.riprap');
   }
 
@@ -61,7 +60,7 @@ class IslandoraRiprapUtils {
   }
 
   /**
-   * Get a Fedora URL for a File entity from Gemini.
+   * Get a Fedora URL for a File entity.
    *
    * @param string $mid
    *   The Meida entity's ID.

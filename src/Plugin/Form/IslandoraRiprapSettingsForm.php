@@ -209,7 +209,6 @@ class IslandoraRiprapSettingsForm extends ConfigFormBase {
       ->set('riprap_local_settings_file', rtrim($form_state->getValue('riprap_local_settings_file'), '/'))
       ->set('execute_riprap_in_cron', $form_state->getValue('execute_riprap_in_cron'))
       ->set('number_of_events', $form_state->getValue('number_of_events'))
-      ->set('gemini_rest_endpoint', rtrim($form_state->getValue('gemini_rest_endpoint'), '/'))
       ->set('use_drupal_urls', $form_state->getValue('use_drupal_urls'))
       ->set('log_riprap_warnings', $form_state->getValue('log_riprap_warnings'))
       ->set('use_sample_failed_fixity_events', $form_state->getValue('use_sample_failed_fixity_events'))
@@ -249,8 +248,6 @@ drupal_media_auth: ['{$values['user_name']}', '{$values['user_pass']}']
 drupal_content_types: ['{$values['fixity_content_type']}']
 drupal_media_tags: ['/taxonomy/term/{$values['fixity_terms']}']
 use_fedora_urls: true
-gemini_endpoint: '{$values['gemini_rest_endpoint']}'
-gemini_auth_header: 'Bearer islandora'
 # Can be a maximum of 50.
 jsonapi_page_size: 50
 # The number of resources to check in one Riprap run; if absent, will use

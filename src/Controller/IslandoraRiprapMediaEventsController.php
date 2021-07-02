@@ -18,7 +18,6 @@ class IslandoraRiprapMediaEventsController extends ControllerBase {
     $this->number_of_events = $config->get('number_of_events') ?: 10;
     $this->use_drupal_urls = $config->get('use_drupal_urls') ?: FALSE;
     $this->show_warnings = !$config->get('show_riprap_warnings') ? $config->get('show_riprap_warnings') : TRUE;
-    $this->gemini_endpoint = $config->get('gemini_rest_endpoint') ?: 'http://localhost:8000/gemini';
   }
 
   /**
