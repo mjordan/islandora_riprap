@@ -72,7 +72,6 @@ class IslandoraRiprapUtils {
     $media = Media::load($mid);
     $media_source_service = \Drupal::service('islandora.media_source_service');
     $source_file = (is_object($media)) ? $media_source_service->getSourceFile($media) : NULL;
-//    $uri = $source_file->getFileUri();
     if ($source_file) {
       $uri = $source_file->getFileUri();
     }
