@@ -34,7 +34,7 @@ class IslandoraRiprapMediaEventsController extends ControllerBase {
 
     $binary_resource_uuid = $riprap->getFileUuid($mid);
     if ($this->use_drupal_urls) {
-      $binary_resource_url = $riprap->getLocalUrl($mid);
+      $binary_resource_url = $riprap->getLocalUrl($mid, FALSE);
     }
     else {
       $binary_resource_url = $riprap->getFedoraUrl($mid);

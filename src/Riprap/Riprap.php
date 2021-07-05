@@ -20,6 +20,7 @@ class Riprap {
    */
   public function __construct() {
     $config = \Drupal::config('islandora_riprap.settings');
+    $this->config = $config;
     $this->riprap_mode = $config->get('riprap_mode') ?: 'remote';
     $this->riprap_endpoint = $config->get('riprap_rest_endpoint') ?: 'http://localhost:8000/api/fixity';
     $this->riprap_local_directory = $config->get('riprap_local_directory') ?: '';
@@ -217,11 +218,14 @@ class Riprap {
    * @param int $mid
    *   A Media ID.
    *
+   * @param bool $return_url
+   *   TRUE returns the file's http URL, FALSE returns the Drupal URI (e.g. public://).
+   *
    * @return string
    *   The local Drupal URL of the file associated with the
    *   incoming Media entity.
    */
-  public function getLocalUrl($mid) {
+  public function getLocalUrl($mid, $return_url = TRUE) {
     if ($this->config->get('media_fields')) {
       $media_fields_config = $this->config->get('media_fields');
       $media_fields = preg_split('/\n/', $media_fields_config);
@@ -240,9 +244,15 @@ class Riprap {
     // in the first one encountered. Assumes each Media entity has only
     // one of the media file fields.
     foreach ($media_fields as $media_field) {
-      if (isset($media->$media_field)) {
-        $url = file_create_url($media->$media_field->entity->getFileUri());
-        return $url;
+      $media_field = trim($media_field);
+      if ($media->hasField($media_field)) {
+        if ($return_url) {
+          $url = file_create_url($media->$media_field->entity->getFileUri());
+          return $url;
+	}
+	else {
+	  return $media->$media_field->entity->getFileUri();
+	}
       }
     }
   }

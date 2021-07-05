@@ -36,7 +36,7 @@ class RiprapResults extends FieldPluginBase {
     $mid = $media->id();
 
     if ($this->use_drupal_urls) {
-      $binary_resource_url = $riprap->getLocalUrl($mid);
+      $binary_resource_url = $riprap->getLocalUrl($mid, FALSE);
     }
     else {
       $binary_resource_url = $riprap->getFedoraUrl($mid);
@@ -88,6 +88,12 @@ class RiprapResults extends FieldPluginBase {
       // Show mid and indicate that file is not in
       // Riprap (e.g., 'No Riprap events for $mid').
       $binary_resource_url = 'No Riprap events for ' . $binary_resource_url;
+      return [
+        '#theme' => 'islandora_riprap_summary',
+        '#content' => $binary_resource_url,
+        '#outcome' => NULL,
+        '#mid' => NULL,
+      ];
     }
 
     // Not a Riprap event, but output that indicates Riprap
