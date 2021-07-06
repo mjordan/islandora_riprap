@@ -71,7 +71,7 @@ class IslandoraRiprapUtils {
   public function getFedoraUrl($mid) {
     $media = Media::load($mid);
     $media_source_service = \Drupal::service('islandora.media_source_service');
-    $source_file = (is_object($media)) ? $media_source_service->getSourceFile($media) : NULL;
+    $source_file = (is_object($media) && $media->bundle() <> 'remote_video') ? $media_source_service->getSourceFile($media) : NULL;
     if ($source_file) {
       $uri = $source_file->getFileUri();
     }
