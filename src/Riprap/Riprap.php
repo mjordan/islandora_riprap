@@ -279,7 +279,7 @@ class Riprap {
    *   Array of yyyy-mm month keys with number of failed events as values.
    */
   public function getFailedFixityEventsReportData() {
-    $event_data = $this->riprap->getEvents(['output_format' => 'json', 'outcome' => 'fail']);
+    $event_data = $this->getEvents(['output_format' => 'json', 'outcome' => 'fail']);
     $event_data_array = json_decode($event_data, TRUE);
     $months = [];
     foreach ($event_data_array as $event) {
