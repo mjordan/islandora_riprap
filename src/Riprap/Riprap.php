@@ -189,6 +189,9 @@ class Riprap {
    */
   public function getFedoraUrl($mid) {
     $media = Media::load($mid);
+    if ($media->bundle() == 'remote_video') {
+      return False
+    }
     $media_source_service = \Drupal::service('islandora.media_source_service');
     $source_file = $media_source_service->getSourceFile($media);
     $uri = $source_file->getFileUri();
