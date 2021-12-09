@@ -160,20 +160,20 @@ function islandora_riprap_cron() {
 function islandora_riprap_islandora_premis_turtle_alter($nid, &$turtle) {
   $config = \Drupal::config('islandora_riprap.settings');
   $riprap = \Drupal::service('islandora_riprap.riprap');
-  $islandora_riprap_utils = \Drupal::service('islandora_riprap.utils');
   $media_source = \Drupal::service('islandora.media_source_service');
+  $islandora_utils = \Drupal::service('islandora.utils');
 
   $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
-  $media = $riprap->getMedia($node);
+  $media = $islandora_utils->getMedia($node);
 
   if (count($media) > 0) {
     foreach ($media as $medium) {
       $file = $media_source->getSourceFile($medium);
       if ($config->get('use_drupal_urls')) {
-        $binary_resource_url = $islandora_riprap_utils->getLocalUrl($medium->id());
+        $binary_resource_url = $riprap->getLocalUrl($medium->id());
       }
       else {
-        $binary_resource_url = $islandora_riprap_utils->getFedoraUrl($medium->id());
+        $binary_resource_url = $riprap->getFedoraUrl($medium->id());
       }
 
       // Create the graph from existing Turtle.
