@@ -11,9 +11,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class IslandoraRiprapGetHashController extends ControllerBase {
 
   /**
-   * Gets the checksum of the file identified by the UUID.
+   * Gets the checksum of the file identified by the file_uri value.
    *
-   * This endpoint uses two query parameters, 'file_uuid' and
+   * This endpoint uses two query parameters, 'file_uri' and
    * 'algorithm', to get a file entity's checksum. 'algorithm'
    * is one of 'md5', 'sha1', or 'sha256'.
    *
