@@ -61,7 +61,7 @@ class RiprapResults extends FieldPluginBase {
 
     // Look for events with an 'event_outcome' of 'fail'.
     $failed_events = 0;
-    if (count($events) > 0) {
+    if (!empty($events)) {
       foreach ($events as $event) {
         if ($event['event_outcome'] == 'fail') {
           $failed_events++;
@@ -83,7 +83,7 @@ class RiprapResults extends FieldPluginBase {
       }
     }
 
-    if (count($events) == 0) {
+    if (empty($events)) {
       $outcome = 'noevents';
       // Show mid and indicate that file is not in
       // Riprap (e.g., 'No Riprap events for $mid').
