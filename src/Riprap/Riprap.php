@@ -2,6 +2,7 @@
 
 namespace Drupal\islandora_riprap\Riprap;
 
+use GuzzleHttp\Exception\ConnectException;
 use Drupal\media\Entity\Media;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Link;
@@ -62,22 +63,34 @@ class Riprap {
         return $body;
       }
       elseif ($code == 404) {
-        \Drupal::logger('islandora_riprap')->error('Riprap service not running or found at @endpoint', ['@endpoint' => $this->riprap_endpoint]);
+        \Drupal::logger('islandora_riprap')->error('Riprap service not running or found at @endpoint', [
+          '@endpoint' => $this->riprap_endpoint,
+        ]);
         // This is a special 'response' indicating that Riprap
         // was not found (or is not running) at its configured URL.
-        $status_message = t("Riprap not found or is not running at @endpoint", ['@endpoint' => $this->riprap_endpoint]);
-        return json_encode(['riprap_status' => 404, 'message' => $status_message]);
+        $status_message = t("Riprap not found or is not running at @endpoint", [
+          '@endpoint' => $this->riprap_endpoint,
+        ]);
+        return json_encode([
+          'riprap_status' => 404,
+          'message' => $status_message,
+        ]);
       }
       else {
-        \Drupal::messenger()->addMessage($this->t('Riprap does not have any fixity events for @resource_id.', ['@resource_id' => $resource_id]), 'warning');
+        \Drupal::messenger()->addMessage($this->t('Riprap does not have any fixity events for @resource_id.', [
+          '@resource_id' => $resource_id,
+        ]), 'warning');
         if ($this->show_warnings) {
           if ($resource_id !== 'Not in Fedora') {
-            \Drupal::logger('islandora_riprap')->error('HTTP response code returned by Riprap for request to @resource_id: @code', ['@code' => $code, '@resource_id' => $resource_id]);
+            \Drupal::logger('islandora_riprap')->error('HTTP response code returned by Riprap for request to @resource_id: @code', [
+              '@code' => $code,
+              '@resource_id' => $resource_id,
+            ]);
           }
         }
       }
     }
-    catch (RequestException $e) {
+    catch (ConnectException | RequestException $e) {
       \Drupal::logger('islandora_riprap')->error($e->getMessage());
       \Drupal::messenger()->addMessage($this->t('Sorry, there has been an error connecting to Riprap, please refer to the system log.'), 'error');
     }
@@ -97,7 +110,7 @@ class Riprap {
     foreach ($options as $option_name => $option_value) {
       $riprap_cmd[] = '--' . $option_name . '=' . $option_value;
     }
-    // @todo: limit is not being applied.
+    // @todo limit is not being applied.
     $process = new Process($riprap_cmd);
     $process->setWorkingDirectory($this->riprap_local_directory);
     $process->run();
@@ -155,10 +168,10 @@ class Riprap {
     else {
       $media_fields = [
         'field_media_file',
-	'field_media_document',
-	'field_media_image',
-	'field_media_audio_file',
-	'field_media_video_file',
+        'field_media_document',
+        'field_media_image',
+        'field_media_audio_file',
+        'field_media_video_file',
       ];
     }
     $media = Media::load($mid);
@@ -189,21 +202,23 @@ class Riprap {
    */
   public function getFedoraUrl($mid) {
     $media = Media::load($mid);
+    if ($media->bundle() == 'remote_video') {
+      return FALSE;
+    }
     $media_source_service = \Drupal::service('islandora.media_source_service');
     $source_file = $media_source_service->getSourceFile($media);
     $uri = $source_file->getFileUri();
     $scheme = \Drupal::service('stream_wrapper_manager')->getScheme($uri);
-    $mapper = \Drupal::service('islandora.entity_mapper');
 
     $flysystem_config = Settings::get('flysystem');
     if (isset($flysystem_config[$scheme]) && $flysystem_config[$scheme]['driver'] == 'fedora') {
       $fedora_root = $flysystem_config['fedora']['config']['root'];
       $fedora_root = rtrim($fedora_root, '/');
       $parts = parse_url($uri);
-          $path = $parts['host'] . $parts['path'];
+      $path = $parts['host'] . $parts['path'];
     }
     else {
-      return false;
+      return FALSE;
     }
     $path = ltrim($path, '/');
     $fedora_uri = "$fedora_root/$path";
@@ -217,9 +232,9 @@ class Riprap {
    *
    * @param int $mid
    *   A Media ID.
-   *
    * @param bool $return_url
-   *   TRUE returns the file's http URL, FALSE returns the Drupal URI (e.g. public://).
+   *   TRUE returns the file's http URL,
+   *   FALSE returns the Drupal URI (e.g. public://).
    *
    * @return string
    *   The local Drupal URL of the file associated with the
@@ -233,10 +248,10 @@ class Riprap {
     else {
       $media_fields = [
         'field_media_file',
-	'field_media_document',
-	'field_media_image',
-	'field_media_audio_file',
-	'field_media_video_file',
+        'field_media_document',
+        'field_media_image',
+        'field_media_audio_file',
+        'field_media_video_file',
       ];
     }
     $media = Media::load($mid);
@@ -249,10 +264,10 @@ class Riprap {
         if ($return_url) {
           $url = file_create_url($media->$media_field->entity->getFileUri());
           return $url;
-	}
-	else {
-	  return $media->$media_field->entity->getFileUri();
-	}
+        }
+        else {
+          return $media->$media_field->entity->getFileUri();
+        }
       }
     }
   }
@@ -267,7 +282,12 @@ class Riprap {
     $chart_link = Link::createFromRoute('Failed fixity check events report',
       'islandora_riprap.events_report',
       [],
-      ['attributes' => ['target' => '_blank', 'title' => t('This report will open in a new tab')]]
+      [
+        'attributes' => [
+          'target' => '_blank',
+          'title' => t('This report will open in a new tab'),
+        ],
+      ]
     );
     return $chart_link->toString();
   }
@@ -279,7 +299,10 @@ class Riprap {
    *   Array of yyyy-mm month keys with number of failed events as values.
    */
   public function getFailedFixityEventsReportData() {
-    $event_data = $this->getEvents(['output_format' => 'json', 'outcome' => 'fail']);
+    $event_data = $this->getEvents([
+      'output_format' => 'json',
+      'outcome' => 'fail',
+    ]);
     $event_data_array = json_decode($event_data, TRUE);
     $months = [];
     foreach ($event_data_array as $event) {
